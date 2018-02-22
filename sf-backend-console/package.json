@@ -2,6 +2,7 @@
   "name": "sf-backend-console",
   "version": "0.1.0",
   "private": true,
+  "proxy":"http://localhost:5000/",
   "dependencies": {
     "@types/classnames": "^2.2.3",
     "@types/es6-promise": "^3.3.0",
