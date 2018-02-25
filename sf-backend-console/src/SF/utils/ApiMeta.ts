@@ -79,6 +79,9 @@ export class Library extends Metadata.Library{
         var e= this._entities[entity];
         return e?e.s:null;
     }
+    getEntities() {
+        return Object.keys(this._entities);
+    }
     getEntityTitle(entity: string) {
         var e= this._entities[entity];
         return e?e.t:null;

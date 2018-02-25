@@ -49,6 +49,15 @@ export class ApiForm extends React.Component<ApiFormProps, {value?:any}>{
     //componentWillReceiveProps(nextProps: ApiFormProps) {
     //    alert("ApiForm:componentWillReceiveProps:" + this.props.action+":"+ JSON.stringify(nextProps.value));
     //}
+    getFormProps(): Editors.IBaseEditorProps {
+        var f = this.refs["form"] as any;
+        return f ? f.getFormProps() : null;
+    }
+    getFormState(): Editors.IFormState {
+        var f = this.refs["form"] as any;
+        return f ? f.getFormState() : null;
+    }
+
 
     render() {
         var form = formManager().form(
@@ -56,7 +65,6 @@ export class ApiForm extends React.Component<ApiFormProps, {value?:any}>{
             {
                 className: this.props.className,
                 hertMode: this.props.hertMode,
-                hideSubmitPanel: this.props.hideSubmitPanel,
                 editMode: this.props.editMode,
                 readonly: this.props.readonly
             }
@@ -67,6 +75,7 @@ export class ApiForm extends React.Component<ApiFormProps, {value?:any}>{
             className: this.props.className,
             value: this.state && this.state.value || this.props.value,
             onChange: this.props.onChange || ((v) => this.setState({ value: v })),
+            hideSubmitPanel: this.props.hideSubmitPanel,
             onBuildSubmitPanel: this.props.onBuildSubmitPanel,
             errorPosition: "top",
             help: this.props.help,

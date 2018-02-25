@@ -53,7 +53,7 @@ export class EntityTable extends React.Component<EntityTableProps, {}>
             actions.unshift({
                 build: (r, idx) => {
                     /*<button key={idx} type="button" className="btn btn-default btn-xs table-action" onClick={() => p.onEntitySelected(r)}>选择</button> */
-                    var to = buildEntityLink(entity, keys.map(k => r[k]));
+                    var to = buildEntityLink(entity, keys.map(k => r[k]), this.props.serviceId);
                     if (!to)
                         return null;
                     return <Link key={idx}

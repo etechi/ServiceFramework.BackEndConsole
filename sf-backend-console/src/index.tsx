@@ -9,7 +9,7 @@ var browserHistory=createBrowserHistory();
 //import  AppFrame from "./components/AppFrame";
 import Console from "./components/Console";
 
-var env = (window as any)["ENV"] || {root:"",menu:"default"};
+var env = (window as any)["ENV"] || {root:"/admin/",menu:"default"};
 
 
 function main(){

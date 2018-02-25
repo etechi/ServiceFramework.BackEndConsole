@@ -6,14 +6,16 @@ export interface IHeadLink {
     text: string 
 }
 export interface IHeaderProps {
+    title?: string;
     links: IHeadLink[];
     children?: React.ReactNode;
 }
 export class Header extends React.Component<IHeaderProps, any>{
     render() {
         return <div className="page-bar">
+            {this.props.title ? <label style={{ float: 'left', margin: "10px 10px 0 0", fontSize: "16px", fontFamily: "微软雅黑" }}>{this.props.title}</label> : null}
             <ul className="page-breadcrumb">
-                <li key={-1}><Link to="/admin/">管理中心</Link> <i className="fa fa-circle"></i></li>
+                {/*<li key={-1}><Link to="/">管理中心</Link> <i className="fa fa-circle"></i></li>*/}
                 {
                     this.props.links.map((hl, idx) =>
                         <li key={idx}>
@@ -47,6 +49,7 @@ export class Container extends React.Component<IContainerProps, any> {
     render() {
         var children = React.Children.toArray(this.props.children);
         var header = children.filter(i => (i as any).type == Header);
+        if (header.length == 0) header = [children[0]];
         var content = children.filter(i => (i as any).type == Content);
         return <div className="page-wrapper" style={this.props.style} >
             {header}

@@ -153,10 +153,12 @@ export class Container extends React.Component<ContainerProps, ContainerState> {
             if (!pathPrefix || pathPrefix[pathPrefix.length - 1] != '/')
                 pathPrefix += '/';
             
-            var curPath=this.props.curPath ||"";
-            curPath=curPath.startsWith(pathPrefix)?curPath.substr(pathPrefix.length):"";
+            var curPath = this.props.curPath || "";
+            
+            curPath = curPath.startsWith(pathPrefix) ? curPath.substr(pathPrefix.length) : "";
+            if (curPath[0] != '/') curPath = '/' + curPath;
 
-            this.props.menuGroups.reverse().forEach((grp, i1) =>
+            this.props.menuGroups.forEach((grp, i1) =>
                 children.push(
                     <MenuGroup key={i1} name={grp.Title}>
                         {grp.Children ? grp.Children.map((cat, i2) =>

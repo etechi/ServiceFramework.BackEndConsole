@@ -226,6 +226,14 @@ export function buildForm(
             reset() {
                 (this.refs["form"] as any).reset();
             }
+            getFormProps(): Editors.IBaseEditorProps {
+                var f = this.refs["form"] as any;
+                return f ? f.getFormProps() : null;
+            }
+            getFormState(): Editors.IFormState {
+                var f = this.refs["form"] as any;
+                return f ? f.getFormState() : null;
+            }
             render() {
                 const {onSubmit, onChange, value, errorPosition, hideSubmitPanel,onBuildSubmitPanel} = this.props;
                 return <Editors.Form
@@ -307,8 +315,17 @@ export function buildFormByRender(
         reset() {
             (this.refs["form"] as any).reset();
         }
+        getFormProps(): Editors.IBaseEditorProps {
+            var f = this.refs["form"] as any;
+            return f ? f.getFormProps() : null;
+        }
+        getFormState(): Editors.IFormState {
+            var f = this.refs["form"] as any;
+            return f ? f.getFormState() : null;
+        }
+
         render() {
-            const {help,onSubmit, onChange, value, errorPosition, hideSubmitPanel, onBuildSubmitPanel} = this.props;
+            const { help, onSubmit, onChange, value, errorPosition, hideSubmitPanel, onBuildSubmitPanel } = this.props;
             return <Editors.Form
                 ref="form"
                 className={this.props.className}
@@ -332,7 +349,7 @@ export function buildFormByRender(
                                 renderProvider: renderProvider
                             }),
                         errorPosition != "top" ? errDom : null,
-                        hideSubmitPanel ? null :
+                        hideSubmitPanel || args.hideSubmitPanel ? null :
                             <div key="footer" className="form-footer">
                                 {onBuildSubmitPanel && onBuildSubmitPanel(prop, state) ||
                                     <button className="btn btn-primary btn-lg" type="submit" disabled={state.submitting}>

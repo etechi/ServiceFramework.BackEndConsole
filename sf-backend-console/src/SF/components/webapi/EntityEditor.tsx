@@ -10,7 +10,7 @@ var browserHistory=createBrowserHistory();
 import * as Editors from "../editors";
 
 export interface EntityEditorProps {
-    id?: number | any[];
+    id?: string|number | any[];
     help?: string;
     controller: string;
     serviceId?: number;
@@ -20,6 +20,7 @@ export interface EntityEditorProps {
     readonly?: boolean;
     noReturn?:boolean;
     loadAction?: string;
+    hideSubmitPanel?: boolean;
     onBuildSubmitPanel?: (props: Editors.IBaseEditorProps, state: Editors.IFormState, children?: React.ReactNode) => JSX.Element;
     onSubmitSuccess?(result:any): void;
 }
@@ -100,6 +101,7 @@ export class EntityEditor extends React.Component<EntityEditorProps, state>{
         });
     }
     componentDidMount() {
+        console.log("1111");
         if (this.props.id)
             wait.start(() =>
                 this.loadValue(this.props.id).then(re => {
@@ -186,6 +188,63 @@ export class EntityEditor extends React.Component<EntityEditorProps, state>{
             )
             .then(re => this.setStatePromise(re));
     }
+    getFormProps(): Editors.IBaseEditorProps {
+        var f = this.refs["form"] as any;
+        return f?f.getFormProps():null;
+    }
+    getFormState(): Editors.IFormState {
+        var f = this.refs["form"] as any;
+        return f?f.getFormState():null;
+    }
+    buildSubmitPanel() {
+        var { lib, act } = this.getLibraryAndLoadAction();
+        var id = this.state.value && act ? lib.tryGetIdent(this.state.value, act.Type) || this.state.value.Id : this.props.id;
+        if ((id instanceof Array) && !id[0]) id = null;
+
+        var createAction = lib.action(this.props.controller, this.props.createAction || "Create");
+        var removeAction = lib.action(this.props.controller, "Remove");
+
+        var createSupported = !!createAction;
+        var removeSupported = !!removeAction;
+        var form = this.refs["form"] as any;
+
+        return this.buildSubmitPanelInternal(
+            form.getFormProps(),
+            form.getFormState(),
+            id,
+            createSupported,
+            removeSupported
+        );
+    }
+    buildSubmitPanelInternal(
+        props: Editors.IBaseEditorProps,
+        state: Editors.IFormState,
+        id: any,
+        createSupported: boolean,
+        removeSupported: boolean
+    ) {
+        if (!props || !state) return null;
+        
+        return <div className='editor-submit-panel'>
+            {this.props.readonly ? null : <div className="btn-group" >
+                <button type='button' className="btn btn-primary btn-sm" disabled={state.submitting || !state.meta.changed} onClick={() => this.handleSubmit()} ><span className={state.submitting ? "fa fa-cog fa-spin" : "fa fa-save"}></span> 保存</button>
+                <button type='button' className="btn btn-default btn-sm" disabled={state.submitting || !state.meta.changed} onClick={() => this.handleSubmitAndReturn()} >保存并返回</button>
+                {createSupported ? <button type='button' className="btn btn-default btn-sm" disabled={state.submitting || !state.meta.changed} onClick={() => this.handleSubmitAndNew()} >保存并新建</button> : null}
+                {createSupported ? <button type='button' className="btn btn-default btn-sm" disabled={state.submitting || !state.meta.changed} onClick={() => this.handleSubmitAndCopy()} >保存并复制</button> : null}
+            </div>}
+            &nbsp;
+            {this.props.readonly ? null :
+                <div className="btn-group">
+                    <button type='button' className="btn btn-default btn-sm" disabled={state.submitting} onClick={() => this.handleReset()} >重置</button>
+                    {createSupported && id ? <button type='button' className="btn btn-default btn-sm" disabled={state.submitting} onClick={() => this.handleNew(state.meta.changed)} >新建</button> : null}
+                    {createSupported && id ? <button type='button' className="btn btn-default btn-sm" disabled={state.submitting} onClick={() => this.handleCopy(state.meta.changed)} >复制</button> : null}
+                    {removeSupported && id ? <button type='button' className="btn btn-default btn-sm" disabled={state.submitting} onClick={() => this.handleRemove(state.meta.changed)} >删除</button> : null}
+                    <button type='button' className="btn btn-default btn-sm" disabled={state.submitting} onClick={() => this.handleReturn(state.meta.changed)} >返回</button>
+                </div>
+            }
+            {this.props.readonly && !this.props.noReturn ? <button type='button' className="btn btn-default btn-sm" disabled={state.submitting} onClick={() => this.handleReturn(state.meta.changed)} >返回</button> : null}
+        </div>;
+    }
     render() {
         var {lib, act} = this.getLibraryAndLoadAction();
         var id = this.state.value && act ? lib.tryGetIdent(this.state.value, act.Type) || this.state.value.Id : this.props.id;
@@ -195,7 +254,6 @@ export class EntityEditor extends React.Component<EntityEditorProps, state>{
         var createAction = lib.action(this.props.controller, this.props.createAction || "Create");
         var removeAction = lib.action(this.props.controller, "Remove");
 
-        var createSupported = !!updateAction;
         var createSupported = !!createAction;
         var removeSupported = !!removeAction;
 
@@ -212,32 +270,18 @@ export class EntityEditor extends React.Component<EntityEditorProps, state>{
                 serviceId={this.props.serviceId}
                 action={this.props.readonly ? "@" + this.props.loadAction : id ? (this.props.updateAction || "Update") : (this.props.createAction || "Create") }
                 value={this.state.value}
-                onChange={(v) =>
-                    this.setState({ value: v })
+                onChange={(v) => {
+                    console.log(v) 
+                    this.setState({ value: v });
+                }
                 }
                 editMode={!!id}
                 onSubmit={(data) => this.handleOnSubmit(data) }
                 onSubmitSuccess={this.props.onSubmitSuccess}
+                hideSubmitPanel={this.props.hideSubmitPanel}
                 onBuildSubmitPanel={(props: Editors.IBaseEditorProps, state: Editors.IFormState) => {
-                    var cmds = <div className='editor-submit-panel'>
-                        {this.props.readonly ? null : < div className= "btn-group" >
-                            <button type='button' className="btn btn-primary" disabled={state.submitting || !state.meta.changed} onClick={() => this.handleSubmit() } ><span className={state.submitting ? "fa fa-cog fa-spin" : "fa fa-save"}></span> 保存</button>
-                            <button type='button' className="btn btn-default" disabled={state.submitting || !state.meta.changed} onClick={() => this.handleSubmitAndReturn() } >保存并返回</button>
-                            {createSupported ? <button type='button' className="btn btn-default" disabled={state.submitting || !state.meta.changed} onClick={() => this.handleSubmitAndNew() } >保存并新建</button> : null}
-                            {createSupported ? <button type='button' className="btn btn-default" disabled={state.submitting || !state.meta.changed} onClick={() => this.handleSubmitAndCopy() } >保存并复制</button> : null}
-                        </div>}
-                        {this.props.readonly ? null :
-                            <div className="btn-group">
-                                <button type='button' className="btn btn-default" disabled={state.submitting } onClick={() => this.handleReset() } >重置</button>
-                                {createSupported && id ? <button type='button' className="btn btn-default" disabled={state.submitting} onClick={() => this.handleNew(state.meta.changed) } >新建</button> : null}
-                                {createSupported && id ? <button type='button' className="btn btn-default" disabled={state.submitting} onClick={() => this.handleCopy(state.meta.changed) } >复制</button> : null}
-                                {removeSupported && id ? <button type='button' className="btn btn-default" disabled={state.submitting} onClick={() => this.handleRemove(state.meta.changed) } >删除</button> : null}
-                                <button type='button' className="btn btn-default" disabled={state.submitting} onClick={() => this.handleReturn(state.meta.changed) } >返回</button>
-                            </div>
-                        }
-                        {this.props.readonly && !this.props.noReturn ? <button type='button' className="btn btn-default" disabled={state.submitting} onClick={() => this.handleReturn(state.meta.changed) } >返回</button> : null}
-                    </div>
-                    return this.props.onBuildSubmitPanel ? this.props.onBuildSubmitPanel(props, cmds as any) : cmds;
+                    var cmds = this.buildSubmitPanelInternal(props, state, id, createSupported, removeSupported);
+                    return this.props.onBuildSubmitPanel ? this.props.onBuildSubmitPanel(props, state, cmds as any) : cmds;
                 } }
                 />
             }

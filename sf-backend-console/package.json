@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "proxy": "http://localhost:5000/",
+  "homepage": "http://localhost:3000/admin",
   "dependencies": {
     "bluebird": "^3.5.1",
     "classnames": "^2.2.5",

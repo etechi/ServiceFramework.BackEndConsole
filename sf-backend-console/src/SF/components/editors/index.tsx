@@ -732,7 +732,18 @@ export class Form extends React.Component<IFormProps, IFormState>{
     //        this._submitHandler=null;
     //    }
     //}
-
+    getFormProps() :IBaseEditorProps{
+        const { curValue, meta, submitError } = this.state;
+        return {
+            meta: meta,
+            onChange: (e) => this.handleChange(e),
+            disabled: this.props.disabled,
+            value: curValue
+        };
+    }
+    getFormState(): IFormState {
+        return this.state;
+    }
     render() {
         const {help,render,className} = this.props;
         const {curValue, meta, submitError} = this.state;

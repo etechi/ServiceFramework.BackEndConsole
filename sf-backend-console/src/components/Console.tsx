@@ -4,6 +4,7 @@ import * as PropTypes from 'prop-types';
 import { Route } from 'react-router';
  
 import Dashboard from './Dashboard';
+
 import * as WA from '../SF/webadmin';
 import { Image } from '../SF/components/utils/Image';
 // import modules from '../modules';
@@ -31,10 +32,9 @@ interface state {
         message?:string;
     },
     state?:SigninState,
-    routes?:JSX.Element[];
     setting?: Setting.IBackEndConsoleSetting;
 }
-var env = (window as any)["ENV"] || {root:"",menu:"default"};
+var env = (window as any)["ENV"] || {root:"/",menu:"default"};
 
 export default class AppFrame extends React.Component<AppFrameProps, state> {
     constructor(props: AppFrameProps,ctx:any) {
@@ -143,8 +143,8 @@ export default class AppFrame extends React.Component<AppFrameProps, state> {
                 message={signin.message} 
                 onChange={(acc,pwd,exec)=>this.handleSigninChanged(acc,pwd,exec)}/>:
                 null}
-            {state.state==SigninState.signed?<Route exact path="/" component={Dashboard}/>:null}
-            {state.state==SigninState.signed?this.state.routes:null}
+            {setting?<Route exact path="/" component={Dashboard}/>:null}
+            {setting ? <Route path="/ap" component={setting.AutoPage}/>:null}
         </WA.Application>
     }
 } 

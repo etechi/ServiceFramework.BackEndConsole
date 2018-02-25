@@ -31,8 +31,9 @@ interface ILinkWrapper {
     (rows: any[], render: TableColumnRender.ICellRender, ctx: TableColumnRender.IRenderExecContext): TableColumnRender.ICellRender
 }
 interface IEntityIdent {
-    type: string
+    type: string;
     idents: string[];
+    svc?:any
 }
 interface IEntityIdentGetter {
     (row: any): IEntityIdent;
@@ -267,10 +268,10 @@ function buildColumn(path: string, getter: TableColumnRender.IFieldGetter, prop:
                             var i = s.indexOf('-');
                             if (i == -1)
                                 return render(a);
-                            type = s.substring(0, i);
+                            type = s.substring(0, i); 
                             idents = s.substring(i + 1).split('-');
-                        } 
-                        to = buildEntityLink(type, idents);
+                        }
+                        to = buildEntityLink(type, idents, v.svc);
                         if (!to)
                             return render(a);
                     }

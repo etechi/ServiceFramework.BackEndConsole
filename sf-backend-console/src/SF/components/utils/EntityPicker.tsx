@@ -150,6 +150,7 @@ interface SmallSingleEntityPickerState {
         text?: string;
         entity?: string;
         ident?: any;
+        svc?:any
     };
     options?: SelectOption[];
 }
@@ -188,7 +189,7 @@ class SmallSingleEntityPicker extends React.Component<EntityPickerProps, SmallSi
         var p = this.props;
         if (p.disabled) {
             var obj = this.state && this.state.obj;
-            var to = obj && obj.ident && obj.entity ? buildEntityLink(obj.entity, obj.ident) : null;
+            var to = obj && obj.ident && obj.entity ? buildEntityLink(obj.entity, obj.ident,obj.svc) : null;
             return <div className={`form-control small-single entity-picker readonly ${p.className || ''}`}>
                 {!obj ? "选项读取中..." : to ? <Link to={to}>{obj.text}</Link> : obj.text}
             </div>;
@@ -225,6 +226,7 @@ interface LargeSingleEntityPickerState {
     selectAction?: string;
     entity?: string;
     ident?: any[];
+    svc?:any
 
 }
 class LargeSingleEntityPicker extends React.Component<EntityPickerProps, LargeSingleEntityPickerState > {
@@ -362,7 +364,7 @@ class LargeSingleEntityPicker extends React.Component<EntityPickerProps, LargeSi
         if (text && !s.ident)
             return <div className={`form-control large-single entity-picker error ${p.className || ''} ${p.disabled ? 'disabled' : ''}`}>{s.text}</div>;
 
-        var to = text && p.disabled ? buildEntityLink(s.entity, s.ident) : null;
+        var to = text && p.disabled ? buildEntityLink(s.entity, s.ident,s.svc) : null;
         var ctn = to ? <Link to={to }>{text}</Link> : text;
 
         return <div className={`input-group large-single entity-picker ${p.className || ''} ${p.disabled?'disabled':''}`}>
