@@ -3,21 +3,11 @@ import { render } from 'react-dom'
 import { Route } from 'react-router'
 import {BrowserRouter} from 'react-router-dom'
 
-//import * as  formItemAdjuster  from "./formItemAdjuster";
-
-import * as WA from "SF/webadmin";
-//import * as assign from "SF/utils/assign";
-import * as Meta from "SF/utils/Metadata";
-import * as ApiMeta from "SF/utils/ApiMeta";
-import * as ApiFormManager from "SF/components/webapi/ApiFormManager";
-import * as  ApiTableManager  from "SF/components/webapi/ApiTableManager";
-import { setup as setupEntityLinkBuilder } from "SF/utils/EntityLinkBuilder";
-import * as apicall from "SF/utils/apicall";
 import {createBrowserHistory} from 'history';
 var browserHistory=createBrowserHistory();
 
-
-import  AppFrame from "./components/AppFrame";
+//import  AppFrame from "./components/AppFrame";
+import Console from "./components/Console";
 
 var env = (window as any)["ENV"] || {root:"",menu:"default"};
 
@@ -27,7 +17,7 @@ function main(){
 
     render(
     <BrowserRouter basename={env.root}>
-        <Route component={AppFrame}/>
+        <Route component={Console}/>
     </BrowserRouter>
     , document.getElementById('root'))
 

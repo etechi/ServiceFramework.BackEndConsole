@@ -1,8 +1,9 @@
 ﻿import * as React from 'react'
 import * as ReactRouter from 'react-router'
-import * as apicall from 'SF/utils/apicall';
-import * as Views from 'SF/webadmin/components/Views';
-import * as Page from "SF/webadmin/components/Page"
+import * as apicall from '../SF/utils/apicall';
+import * as Views from '../SF/webadmin/components/Views';
+import * as Page from "../SF/webadmin/components/Page"
+
 interface PageContent{
     Path:string;
     Type:string;

@@ -1,5 +1,5 @@
-﻿import * as  ManagerBuilder  from "SF/webadmin/ManagerBuilder"; 
-import * as ApiMeta from "SF/utils/ApiMeta";
+﻿import * as  ManagerBuilder  from "./SF/webadmin/ManagerBuilder"; 
+import * as ApiMeta from "./SF/utils/ApiMeta";
 
 
 function itemNormalize(items: any[]): any[] {

@@ -1,25 +1,19 @@
 ﻿import * as React from 'react';
-import Dashboard from './Dashboard';
-import * as WA from 'SF/webadmin';
-import { Image } from 'SF/components/utils/Image';
-// import modules from '../modules';
-// import * as  api  from '../webapi-all';
-import * as auth from 'SF/utils/auth';
 import { Location } from 'history';
 import * as PropTypes from 'prop-types';
-import * as menu from 'SF/webadmin/menu-types';
-import SigninPage from './SigninPage';
 import { Route } from 'react-router';
-import * as apicall from 'SF/utils/apicall';
-import * as Meta from 'SF/utils/Metadata';
-import * as ApiMeta from 'SF/utils/ApiMeta';
-import * as ApiFormManager from 'SF/components/webapi/ApiFormManager';
-import * as  ApiTableManager  from 'SF/components/webapi/ApiTableManager';
-import { setup as setupEntityLinkBuilder } from 'SF/utils/EntityLinkBuilder';
-import * as config from '../config';
-import { IManagerBuildResult } from 'SF/webadmin/ManagerBuilder';
+ 
+import Dashboard from './Dashboard';
+import * as WA from '../SF/webadmin';
+import { Image } from '../SF/components/utils/Image';
+// import modules from '../modules';
+// import * as  api  from '../webapi-all';
+import * as auth from '../SF/utils/auth';
+import SigninPage from './SigninPage';
+import * as apicall from '../SF/utils/apicall';
+import * as Setting from '../SF/webadmin/BackEndConsoleSetting';
 import * as  superagent from 'superagent';
-import * as base64 from 'SF/utils/base64';
+import * as base64 from '../SF/utils/base64';
 
 export interface AppFrameProps {
     location?: Location;
@@ -38,8 +32,7 @@ interface state {
     },
     state?:SigninState,
     routes?:JSX.Element[];
-    menus?:menu.IMenuCategory[];
-    user?:{nick:string,icon:string};
+    setting?: Setting.IBackEndConsoleSetting;
 }
 var env = (window as any)["ENV"] || {root:"",menu:"default"};
 
@@ -51,7 +44,7 @@ export default class AppFrame extends React.Component<AppFrameProps, state> {
     handleSignout() {
          if (sessionStorage)
               sessionStorage.removeItem("access-token");
-         this.setState({ state: SigninState.unsigned, user: null, form: {} });
+         this.setState({ state: SigninState.unsigned, setting: null, form: {} });
     }
     componentDidMount() {
         if (sessionStorage){
@@ -62,36 +55,13 @@ export default class AppFrame extends React.Component<AppFrameProps, state> {
                 return;
             }
         }
-        this.setState({ state: SigninState.unsigned, user: null, form: {} });
+        this.setState({ state: SigninState.unsigned, setting:null, form: {} });
     }
     loadData() {
-        Promise.all([
-            apicall.call("ServiceMetadata", "Json"),
-            apicall.call("BackEndAdminConsole", "GetConsole", { ConsoleIdent: "default" }),
-            apicall.call("User", "GetCurUser")
-            //api.User.GetPermissions() 
-        ]).then(re => {
-            var lib = new ApiMeta.Library(re[0] as any);
-            var items: any = re[1];
-            var user: any = re[2];
-
-            var permissions: any = re[3];
-            ApiMeta.setDefaultLibrary(lib);
-
-            var apiForms = new ApiFormManager.ApiFormManager(lib, null);//formItemAdjuster.itemAdjuster);
-            ApiFormManager.setDefaultFormManager(apiForms);
-            var result = config.build(lib, env.root, permissions, items, window.location.href.indexOf("all=true") != -1);
-
-            setupEntityLinkBuilder([result.entityLinkBuilders], env.root);
-
-            var tm = new ApiTableManager.ApiTableManager(apiForms);
-            //modules.filter(m => m.api && m.api.queries ? true : false).forEach(m =>
-            //    m.api.queries.forEach(f => tm.createTable(f))
-            //);
-            ApiTableManager.setDefaultTableManager(tm);
-
-            this.setState({ state: SigninState.signed, form: null, menus: result.menus, routes: result.routes, user: { nick: user.Name, icon: user.Icon } });
+        Setting.loadSetting(env.root).then(s => {
+            this.setState({ state: SigninState.signed, form: null, setting:s });
         });
+
     }
     handleSigninChanged( acc:string, pwd:string, exec:boolean){
         this.setState({form:{account:acc,password:pwd,executing:exec,message:""}});
@@ -149,18 +119,18 @@ export default class AppFrame extends React.Component<AppFrameProps, state> {
     render(){
         var path=this.props.location.pathname;
         var state=this.state || {};
-        var signin=state.form || {};
-        var u = state.user;
+        var signin = state.form || {};
+        var setting = state.setting;
         return <WA.Application>
             <WA.Header.Container>
                 <WA.Header.Logo>系统管理中心</WA.Header.Logo>
-                {u ? <WA.Header.Text to={"/admin/" + encodeURIComponent("系统安全") + "/AdminInfo"}>
-                    <Image className="img-circle" format="c30" res={u.icon} />
-                    <span className="username username-hide-on-mobile">{u.nick}</span>
+                {setting ? <WA.Header.Text to={"/admin/" + encodeURIComponent("系统安全") + "/AdminInfo"}>
+                    <Image className="img-circle" format="c30" res={setting.User.Icon} />
+                    <span className="username username-hide-on-mobile">{setting.User.Name}</span>
                 </WA.Header.Text> : null}
-                {u?<WA.Header.Button onClick={() => this.handleSignout() }><i className="icon-logout"></i></WA.Header.Button>:null}
+                {setting?<WA.Header.Button onClick={() => this.handleSignout() }><i className="icon-logout"></i></WA.Header.Button>:null}
             </WA.Header.Container>
-            {u ? <WA.SideBar.Container pathPrefix={"/"} menuCategories={state.menus/* modules.map(m => m.menu) */} curPath={path} >
+            {setting ? <WA.SideBar.Container pathPrefix={"/"} menuGroups={setting.MenuItems/* modules.map(m => m.menu) */} curPath={path} >
                 {/*<WA.SideBar.SearchBox></WA.SideBar.SearchBox>*/}
                 <WA.SideBar.MenuItem icon='icon-home' name='首页' to='/' isActive={false}/>
             </WA.SideBar.Container> : null}
