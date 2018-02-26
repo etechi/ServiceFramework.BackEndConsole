@@ -21,5 +21,6 @@ export function buildEntityLink(type: string, ids: any[],svc:any) {
         return null;
     var builder = entityMap[type];
     if (!builder) return null;
+    if (!svc) svc = 0;
     return rootUrl + builder(ids,svc);
 }
