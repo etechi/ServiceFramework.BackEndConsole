@@ -4,6 +4,10 @@ import { Route } from 'react-router'
 import {BrowserRouter} from 'react-router-dom'
 
 import {createBrowserHistory} from 'history';
+
+require('./styles/index.css'); 
+
+
 var browserHistory=createBrowserHistory();
 
 //import  AppFrame from "./components/AppFrame";
@@ -11,7 +15,7 @@ import Console from "./components/Console";
 
 var env = (window as any)["ENV"] || {root:"/admin/",menu:"default"};
 
-
+ 
 function main(){
 
 

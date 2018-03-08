@@ -12,6 +12,7 @@ import {DatePicker} from "../utils/DatePicker";
 import {ImagePicker} from "../utils/ImagePicker";
 import {EntityPicker} from "../utils/EntityPicker";
 import {RichEditor} from "../utils/KRichEditor";
+import {TimeEditor} from "../utils/TimeEditor";
 import {TreeEditor, TreeNodeConfig} from "./TreeEditor";
 import {TableEditor,IColumn as TableEditorColumn} from "./TableEditor";
 import * as Editors from "../editors";
@@ -137,6 +138,13 @@ const rich_editor_builder = (ctx: BuildContext, item: FI.FormField) => {
     return {
         render: (field: Editors.IInputProps) =>
             <RichEditor {...field} {...props}/>
+    }
+};
+const time_editor_builder = (ctx: BuildContext, item: FI.FormField) => {
+    var props = readonlyPropFilter(ctx, item.componentProps);
+    return {
+        render: (field: Editors.IInputProps) =>
+            <TimeEditor {...field} {...props}/>
     }
 };
 const entity_picker_builder = (ctx: BuildContext, item: FI.FormField)=> {
@@ -378,6 +386,7 @@ editor_builders['image-uploader'] = image_uploader_builder;
 editor_builders['entity-picker'] = entity_picker_builder;
 editor_builders['checkbox'] = checkbox_builder;
 editor_builders['rich-editor'] = rich_editor_builder;
+editor_builders['time-editor'] = time_editor_builder;
 editor_builders['tree-editor'] = tree_editor_builder;
 editor_builders['dyn-prop-editor'] = dyn_prop_editor;
 editor_builders['table-editor'] = table_editor_builder;

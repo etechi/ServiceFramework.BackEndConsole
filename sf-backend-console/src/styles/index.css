@@ -1,4 +1,7 @@
-﻿@charset "UTF-8";
+@charset "UTF-8";
+.test-style {
+  color: red; }
+
 .sk-circle {
   margin: 100px auto;
   width: 40px;
@@ -1167,6 +1170,12 @@ span.fa.check-icon {
   color: #444;
   cursor: pointer; }
 
+div.control-content > div.form-item-set > div.form-group:first-child:last-child > label.control-label {
+  display: none; }
+
+div.control-content > div.form-item-set > div.form-group:first-child:last-child > div.control-content {
+  margin-left: 0; }
+
 .dynamic-form {
   background-color: #fff;
   padding: 20px 20px 20px 20px;
@@ -1182,6 +1191,10 @@ span.fa.check-icon {
       display: inline-block; }
   .dynamic-form div.hbox > div {
     float: left; }
+  .dynamic-form > div.form-group > label.control-label {
+    display: none !important; }
+  .dynamic-form > div.form-group > div.control-content {
+    margin-left: 10px !important; }
   .dynamic-form div.form-group {
     position: relative;
     border-bottom: 1px dotted #ddd; }
@@ -1244,7 +1257,8 @@ span.fa.check-icon {
   .dynamic-form div.form-item-array.vert-mode > div.array-item {
     border-bottom: 1px solid #ddd;
     margin-left: -40px;
-    padding-left: 40px; }
+    padding-left: 40px;
+    min-height: 100px; }
     .dynamic-form div.form-item-array.vert-mode > div.array-item > div.buttons {
       position: absolute;
       left: -30px;
@@ -1260,6 +1274,10 @@ span.fa.check-icon {
       color: #ddd;
       font-family: Arial;
       font-size: 30px !important; }
+    .dynamic-form div.form-item-array.vert-mode > div.array-item > div.form-group > label.control-label {
+      display: none !important; }
+    .dynamic-form div.form-item-array.vert-mode > div.array-item > div.form-group > div.control-content {
+      margin-left: 10px !important; }
   .dynamic-form div.form-item-array.hert-mode div.buttons {
     position: absolute;
     float: right;
@@ -2390,4 +2408,3 @@ div.expr-time-range {
   width: 280px; }
   div.expr-time-range > div.input-group {
     width: 200px; }
-

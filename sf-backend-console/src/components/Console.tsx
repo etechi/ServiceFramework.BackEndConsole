@@ -76,14 +76,14 @@ export default class AppFrame extends React.Component<AppFrameProps, state> {
         }
 
         superagent
-            .post("/connect/token")
-            .type('form')
-            .set("Authorization","Basic "+base64.encode( "admin.console:pass"))
+            .post("/api/user/signin")
+            .type('application/json')
+            //.set("Authorization","Basic "+base64.encode( "admin.console:pass"))
             .send({
-                grant_type:'password',
-                username:acc,
-                password:pwd,
-                scope:'all'
+                Ident:acc,
+                Password:pwd,
+                Mode:'AccessToken',
+                ClientId:'admin.console'
             })
             .end((err,re) => {
                 if(err){
@@ -97,11 +97,12 @@ export default class AppFrame extends React.Component<AppFrameProps, state> {
                     });
                     return;
                 }
-                apicall.setAccessToken(re.body.access_token);
+                var token=re.body;
+                apicall.setAccessToken(token);
                 if (sessionStorage)
                     sessionStorage.setItem(
                         "access-token",
-                        re.body.access_token
+                        token
                     );
                 this.setState({state:SigninState.loading});
                 this.loadData();

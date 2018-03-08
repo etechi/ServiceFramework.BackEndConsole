@@ -98,6 +98,11 @@ const attrs: { [index: string]: AttrInitializer} = {
             throw "图片只能是简单字段:" + item.formField;
         (item as FI.FormField).editor = "rich-editor";
     },
+    "SF.Sys.Annotations.TimeSpanAttribute"(item, values, ctx) {
+        if (item.itemType != FI.FormItemType.Field)
+            throw "时间只能是简单字段:" + item.formField;
+        (item as FI.FormField).editor = "time-editor";
+    },
     "SF.Sys.Annotations.MultipleLinesAttribute"(item, values, ctx) {
         if (item.type!="string")
             throw "多行标志只能是文本字段:" + item.formField;

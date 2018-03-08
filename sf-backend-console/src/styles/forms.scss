@@ -57,7 +57,19 @@ span.fa.check-icon{
     color:#444;
     cursor:pointer;
 } 
-
+ 
+div.control-content{
+    >div.form-item-set{  
+        >div.form-group:first-child:last-child{
+            >label.control-label{
+                display:none;
+            } 
+            >div.control-content{
+                margin-left:0;
+            }
+        }
+    }
+}
 .dynamic-form{
     background-color:#fff;
     padding:20px 20px 20px 20px;
@@ -78,7 +90,14 @@ span.fa.check-icon{
             float:left;
         }
     }
-    
+    >div.form-group{
+        >label.control-label{
+            display:none !important;
+        }
+        >div.control-content{
+            margin-left:10px !important;
+        }
+    }
     div.form-group{
         position:relative;
         border-bottom:1px dotted #ddd;
@@ -151,6 +170,7 @@ span.fa.check-icon{
     }
     div.control-content.field-size-sm{
         max-width:300px !important;
+       
     }
     div.form-item-set{
         border:1px solid $grayLight;
@@ -165,6 +185,7 @@ span.fa.check-icon{
                 height:auto;
             }
         }
+    
     }
     
     >div.form-group{
@@ -181,6 +202,7 @@ span.fa.check-icon{
              border-bottom:1px solid $grayLight;
              margin-left:-40px;
              padding-left:40px;
+             min-height:100px;
          >div.buttons{
              position:absolute;
              left:-30px;
@@ -197,6 +219,14 @@ span.fa.check-icon{
                 color:$grayLight;
                 font-family:Arial;
                 font-size:30px !important;
+            }
+            >div.form-group{
+                >label.control-label{
+                    display:none !important;
+                }
+                >div.control-content{
+                    margin-left:10px !important;
+                }
             }
         }
     }

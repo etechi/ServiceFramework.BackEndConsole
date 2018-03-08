@@ -207,9 +207,9 @@ function buildColumns(path: string, getter: TableColumnRender.IFieldGetter,  pro
 
     var curOrder = 0;
     cols.forEach(c => {
-        if (c.order)
-            curOrder = c.order;
-        else
+        if (!c.order)
+        //    curOrder = c.order;
+        //else
             c.order = curOrder = (curOrder || 0) + 0.01;
     });
 

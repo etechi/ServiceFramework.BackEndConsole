@@ -28,7 +28,7 @@ export class RichEditor extends React.Component<RichEditorProps, state>{
             return;
         //KindEditor.ready((K) => {
         this._editor = KindEditor.create(this.refs["textarea"], {
-            //themesPath:"/scripts/kindeditor/themes/",
+            themesPath:"/admin/vender/kindeditor/themes/default/default.png",
             syncType: "",
             width: "100%",
             height: "300px",

@@ -1,0 +1,76 @@
+@charset "UTF-8";
+div.data-table {
+  min-height: 100px;
+  font-size: 12px !important;
+  line-height: 2; }
+  div.data-table a {
+    color: #55a; }
+  div.data-table a:hover {
+    color: #7777bb;
+    text-decoration: none; }
+  div.data-table div.fixedDataTableCellLayout_wrap1 {
+    overflow: hidden; }
+  div.data-table div.public_fixedDataTableCell_cellContent {
+    font-weight: normal;
+    padding: 3px 5px;
+    font-family: 宋体 !important; }
+  div.data-table div.filter-panel {
+    border-left: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    padding: 10px 10px 0 10px;
+    border-radius: 4px 4px 0 0;
+    position: relative;
+    background-color: #fff; }
+    div.data-table div.filter-panel div.btn-group.search {
+      position: absolute;
+      right: 10px;
+      bottom: 10px; }
+      div.data-table div.filter-panel div.btn-group.search > div > button {
+        color: #fff !important; }
+      div.data-table div.filter-panel div.btn-group.search > div ul.dropdown-menu {
+        left: auto !important;
+        right: 0 !important; }
+    div.data-table div.filter-panel form.filter-form {
+      padding-right: 70px; }
+  div.data-table div.table-footer {
+    height: 30px;
+    border-bottom: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    border-radius: 0 0 4px 4px; }
+    div.data-table div.table-footer > div.status {
+      float: left;
+      margin: 2px 0 0 10px;
+      color: #060; }
+    div.data-table div.table-footer > nav.paging {
+      float: right;
+      border-left: 1px solid #ccc;
+      padding: 0;
+      margin: 2px 0 0 40px;
+      height: 24px; }
+      div.data-table div.table-footer > nav.paging > ul {
+        margin: 0;
+        padding: 0; }
+        div.data-table div.table-footer > nav.paging > ul > li {
+          display: inline-block;
+          padding: 1px 8px; }
+        div.data-table div.table-footer > nav.paging > ul > li.active {
+          font-weight: bold; }
+        div.data-table div.table-footer > nav.paging > ul > li.pg {
+          cursor: pointer; }
+  div.data-table .public_fixedDataTableRow_main:hover {
+    background-color: #e6e6ff !important; }
+    div.data-table .public_fixedDataTableRow_main:hover .public_fixedDataTableCell_main {
+      background-color: #e6e6ff !important; }
+  div.data-table .entity-table-row-selected {
+    background-color: #b3ffb3; }
+  div.data-table .entity-table-row-selected .public_fixedDataTableCell_main {
+    background-color: #b3ffb3; }
+  div.data-table .public_fixedDataTableRow_main.entity-table-row-selected:hover {
+    background-color: #b3ffb3 !important; }
+    div.data-table .public_fixedDataTableRow_main.entity-table-row-selected:hover .public_fixedDataTableCell_main {
+      background-color: #b3ffb3 !important; }
+  div.data-table a.table-action, div.data-table button.table-action {
+    margin-right: 4px;
+    float: left; }

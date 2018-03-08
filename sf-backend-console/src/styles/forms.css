@@ -1,0 +1,582 @@
+div.uploader.disabled {
+  cursor: default !important;
+  background-color: #eef1f5; }
+
+div.entity-picker.disabled {
+  background-color: #eef1f5; }
+  div.entity-picker.disabled div.form-control {
+    background-color: #eef1f5; }
+
+div.image-picker {
+  padding: 0;
+  border: none !important;
+  background-image: none; }
+
+div.image-picker-control {
+  background-color: #ddd;
+  min-width: 150px;
+  min-height: 150px;
+  width: 100%;
+  background-image: none;
+  border: 1px solid #ccc !important;
+  border-radius: 3px;
+  text-align: center;
+  padding: 0px 0;
+  position: relative; }
+  div.image-picker-control div.empty {
+    margin: 50px 0; }
+  div.image-picker-control > a {
+    padding: 6px 8px;
+    opacity: 0.8;
+    display: none;
+    position: absolute;
+    top: 4px;
+    right: 4px; }
+
+div.image-picker-control.small {
+  min-height: 0;
+  min-width: 0;
+  width: 40px !important;
+  height: 40px  !important; }
+
+div.image-picker-control:hover > a {
+  display: block; }
+
+span.fa.check-icon {
+  font-size: 18px;
+  margin: 6px 0 6px 0;
+  color: #444;
+  cursor: pointer; }
+
+div.control-content > div.form-item-set > div.form-group:first-child:last-child > label.control-label {
+  display: none; }
+
+div.control-content > div.form-item-set > div.form-group:first-child:last-child > div.control-content {
+  margin-left: 0; }
+
+.dynamic-form {
+  background-color: #fff;
+  padding: 20px 20px 20px 20px;
+  border-radius: 4px;
+  width: 950px; }
+  .dynamic-form div.alert.alert-warning {
+    background-color: #ffe2d5 !important;
+    color: #b43424; }
+    .dynamic-form div.alert.alert-warning strong {
+      text-align: right;
+      width: 80px;
+      margin-right: 10px;
+      display: inline-block; }
+  .dynamic-form div.hbox > div {
+    float: left; }
+  .dynamic-form > div.form-group > label.control-label {
+    display: none !important; }
+  .dynamic-form > div.form-group > div.control-content {
+    margin-left: 10px !important; }
+  .dynamic-form div.form-group {
+    position: relative;
+    border-bottom: 1px dotted #ddd; }
+    .dynamic-form div.form-group span.form-help {
+      margin-left: 140px;
+      padding: 2px 0 0 0;
+      display: block;
+      color: #888; }
+    .dynamic-form div.form-group label.control-label {
+      float: left;
+      width: 130px;
+      display: block;
+      text-align: right;
+      margin: 4px 0 0 0; }
+    .dynamic-form div.form-group label.control-label::after {
+      content: ":"; }
+    .dynamic-form div.form-group label.control-label.input-required::before {
+      content: "* ";
+      color: #b43424; }
+    .dynamic-form div.form-group div.control-content {
+      margin-left: 140px; }
+    .dynamic-form div.form-group div.control-content:first-child {
+      margin-left: 0; }
+      .dynamic-form div.form-group div.control-content:first-child > div.form-item-set {
+        padding: 0;
+        border: 0; }
+    .dynamic-form div.form-group span.error {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      background-color: #fff;
+      padding: 3px 6px 3px;
+      border-radius: 4px;
+      color: #f44;
+      z-index: 100; }
+  .dynamic-form div.form-group:last-child {
+    border-bottom: none; }
+  .dynamic-form div.form-group.has-feedback div.control-content .form-control {
+    padding-right: 12px; }
+  .dynamic-form div.form-control {
+    background-color: #f0f0f0; }
+  .dynamic-form div.control-content.field-size-xs {
+    max-width: 150px !important; }
+  .dynamic-form div.control-content.field-size-sm {
+    max-width: 300px !important; }
+  .dynamic-form div.form-item-set {
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 3px; }
+    .dynamic-form div.form-item-set > div.form-group:first-child:last-child {
+      margin-bottom: 0; }
+      .dynamic-form div.form-item-set > div.form-group:first-child:last-child div.image-picker-control.full-width {
+        border: none !important;
+        min-height: 0;
+        min-width: 0;
+        height: auto; }
+  .dynamic-form > div.form-group > div.control-content > div.form-item-set {
+    padding: 0;
+    border: none; }
+  .dynamic-form div.form-item-array.vert-mode > div.array-item {
+    border-bottom: 1px solid #ddd;
+    margin-left: -40px;
+    padding-left: 40px;
+    min-height: 100px; }
+    .dynamic-form div.form-item-array.vert-mode > div.array-item > div.buttons {
+      position: absolute;
+      left: -30px;
+      top: 70px; }
+    .dynamic-form div.form-item-array.vert-mode > div.array-item > span.number {
+      position: absolute;
+      left: -70px;
+      top: 30px;
+      height: 0;
+      width: 100px;
+      text-align: right;
+      overflow: visible;
+      color: #ddd;
+      font-family: Arial;
+      font-size: 30px !important; }
+    .dynamic-form div.form-item-array.vert-mode > div.array-item > div.form-group > label.control-label {
+      display: none !important; }
+    .dynamic-form div.form-item-array.vert-mode > div.array-item > div.form-group > div.control-content {
+      margin-left: 10px !important; }
+  .dynamic-form div.form-item-array.hert-mode div.buttons {
+    position: absolute;
+    float: right;
+    right: 40px;
+    top: 0;
+    z-index: 200; }
+  .dynamic-form div.form-item-array.hert-mode > div.array-item {
+    float: left;
+    position: relative;
+    margin: 0 10px 10px 0; }
+  .dynamic-form div.form-item-array.hert-mode label {
+    display: none; }
+  .dynamic-form div.form-item-array.hert-mode div.control-content {
+    margin-left: 0; }
+  .dynamic-form div.form-item-array.hert-mode > div.empty {
+    float: left;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    color: #ccc;
+    padding: 5px 0;
+    text-align: center;
+    border-radius: 3px;
+    margin: 0 10px 10px 0;
+    padding: 30px;
+    display: none; }
+  .dynamic-form div.form-item-array.vert-mode > div.empty {
+    border: 1px solid #ccc;
+    background-color: #fff;
+    color: #ccc;
+    padding: 30px 0;
+    text-align: center;
+    border-radius: 3px; }
+  .dynamic-form div.form-item-array.vert-mode > div.array-item {
+    position: relative; }
+    .dynamic-form div.form-item-array.vert-mode > div.array-item > div.buttons {
+      position: absolute;
+      right: -110px; }
+  .dynamic-form div.form-item-array.vert-mode > div.add-panel {
+    padding: 10px 0;
+    text-align: center; }
+  .dynamic-form div.form-item-array.vert-mode.readonly > div.empty {
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    color: #888;
+    text-align: left;
+    padding: 6px; }
+  .dynamic-form div.form-footer {
+    text-align: center; }
+    .dynamic-form div.form-footer .btn {
+      margin-right: 8px; }
+    .dynamic-form div.form-footer .btn-group {
+      margin-right: 8px; }
+      .dynamic-form div.form-footer .btn-group > button {
+        margin-right: 0; }
+    .dynamic-form div.form-footer .btn-lg {
+      padding: 6px 30px; }
+
+select.entity-picker.small-single {
+  max-width: 400px; }
+
+div.entity-picker.large-single {
+  max-width: 400px; }
+  div.entity-picker.large-single > div.form-control {
+    border-right: none;
+    border-radius: 2px 0 0 2px !important; }
+  div.entity-picker.large-single > span:last-child > button {
+    height: 30px;
+    border-radius: 0 2px 2px 0 !important; }
+  div.entity-picker.large-single > div.form-control:last-child {
+    border-right: 1px solid #c2cad8 !important;
+    border-radius: 2px !important; }
+
+ul.form-control.entity-picker.small-multiple {
+  height: auto !important;
+  margin: 0;
+  padding: 2px;
+  list-style-type: none;
+  list-style-image: none;
+  max-width: 400px;
+  max-height: 400px;
+  overflow: auto; }
+  ul.form-control.entity-picker.small-multiple li {
+    cursor: pointer;
+    padding: 0;
+    margin: 0; }
+    ul.form-control.entity-picker.small-multiple li .fa {
+      font-size: 14px; }
+  ul.form-control.entity-picker.small-multiple li.active {
+    font-weight: normal; }
+  ul.form-control.entity-picker.small-multiple li:hover {
+    background-color: #f8f8f8; }
+
+table.form-table-editor > tbody > tr > td > ul.form-control.entity-picker.small-multiple {
+  margin-left: 10px; }
+  table.form-table-editor > tbody > tr > td > ul.form-control.entity-picker.small-multiple > li {
+    float: left;
+    margin-right: 10px; }
+
+div.entity-picker.large-multiple {
+  height: auto;
+  padding: 0;
+  max-width: 400px; }
+  div.entity-picker.large-multiple ul {
+    padding: 0;
+    margin: 0;
+    overflow: auto;
+    height: auto;
+    max-height: 200px; }
+    div.entity-picker.large-multiple ul > li {
+      padding: 4px 10px;
+      margin: 0;
+      list-style: none;
+      height: 24px;
+      overflow: hidden; }
+      div.entity-picker.large-multiple ul > li > span {
+        float: right;
+        display: none;
+        cursor: pointer;
+        margin-top: 2px; }
+    div.entity-picker.large-multiple ul > li:hover {
+      background-color: #f8f8f8; }
+      div.entity-picker.large-multiple ul > li:hover > span {
+        display: block; }
+  div.entity-picker.large-multiple > div {
+    padding: 3px 10px;
+    background-color: #fcfcfc; }
+    div.entity-picker.large-multiple > div > div {
+      display: inline-block; }
+    div.entity-picker.large-multiple > div > div.limit {
+      padding: 0 0 0 5px; }
+
+div.rich-editor.readonly {
+  border: 1px solid #ccc;
+  padding: 12px;
+  border-radius: 2px;
+  background-color: #fff; }
+
+div.setting-form {
+  padding: 20px;
+  border: 1px solid #ccc;
+  background-color: #f8f8f8;
+  border-radius: 3px; }
+  div.setting-form > form.dynamic-form > div.form-group > label.control-label {
+    display: none; }
+  div.setting-form > form.dynamic-form > div.form-group > div.control-content {
+    margin-left: 0 !important; }
+  div.setting-form div.form-group span.form-help {
+    margin-left: 160px; }
+  div.setting-form div.form-group label.control-label {
+    width: 150px !important; }
+  div.setting-form div.form-group div.control-content {
+    margin-left: 160px !important; }
+  div.setting-form div.form-group div.control-content:first-child {
+    margin-left: 0px !important; }
+
+table.form-table-editor {
+  width: 100%;
+  border: 1px solid #ddd;
+  background-color: #fff; }
+  table.form-table-editor th {
+    padding: 2px 20px;
+    color: #444;
+    font-weight: normal;
+    min-width: 100px; }
+  table.form-table-editor th:first-child {
+    padding: 2px 6px;
+    min-width: 0; }
+  table.form-table-editor th.field-required::after {
+    padding-left: 4px;
+    content: "*";
+    color: #b43424; }
+  table.form-table-editor th.actions {
+    width: 70px !important;
+    min-width: 0;
+    padding: 2px 0;
+    text-align: center; }
+  table.form-table-editor td {
+    padding: 6px;
+    position: relative;
+    /*>input{
+            min-width:0 !important;
+            width:100% !important;
+            display:inline-block;
+        }*/ }
+    table.form-table-editor td .form-control {
+      border-color: transparent;
+      background-color: transparent; }
+    table.form-table-editor td > span.cell-error {
+      position: absolute;
+      left: 10px;
+      top: 30px;
+      padding: 0 8px;
+      color: #b43424;
+      background-color: #fff;
+      border: 1px dotted #ddd;
+      border-radius: 3px;
+      white-space: nowrap; }
+  table.form-table-editor td.touched > .form-control {
+    color: #22f !important; }
+  table.form-table-editor td.actions {
+    padding: 0;
+    text-align: center; }
+  table.form-table-editor tr {
+    border-bottom: 1px dotted #ddd; }
+  table.form-table-editor > tbody > tr.active > td > .form-control {
+    border-color: #ccc;
+    background-color: #fff; }
+  table.form-table-editor tr:hover {
+    background-color: #f8f8f8; }
+  table.form-table-editor tr.form-table-editor-header {
+    background-color: #f8f8f8; }
+
+div.form-tree-editor {
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  background-color: #f8f8f8;
+  position: relative;
+  min-height: 600px; }
+  div.form-tree-editor div.actions {
+    float: right; }
+    div.form-tree-editor div.actions div.btn-group {
+      margin-right: 8px; }
+  div.form-tree-editor div.title {
+    padding: 2px 16px;
+    background-color: #f0f0f0;
+    height: 30px; }
+    div.form-tree-editor div.title button {
+      width: auto;
+      padding: 3px 8px 2px 8px; }
+    div.form-tree-editor div.title b {
+      display: inline-block;
+      margin: 0; }
+  div.form-tree-editor div.tree-nodes {
+    background-color: #fff;
+    position: absolute;
+    top: 30px;
+    left: 0;
+    bottom: 0;
+    width: 200px;
+    overflow: auto;
+    padding: 10px; }
+    div.form-tree-editor div.tree-nodes div.buttons {
+      float: right;
+      display: none; }
+    div.form-tree-editor div.tree-nodes ul {
+      margin: 0;
+      padding: 0 0 0 10px;
+      list-style-type: none; }
+    div.form-tree-editor div.tree-nodes li {
+      margin: 0;
+      padding: 0; }
+      div.form-tree-editor div.tree-nodes li label {
+        cursor: pointer; }
+    div.form-tree-editor div.tree-nodes li.active > label {
+      color: #b43424;
+      font-weight: bold; }
+    div.form-tree-editor div.tree-nodes li.add-panel {
+      display: none; }
+  div.form-tree-editor div.tree-content {
+    width: 580px;
+    margin-left: 200px; }
+    div.form-tree-editor div.tree-content > div {
+      padding: 20px; }
+
+div.form-tree-editor.form-pages {
+  position: fixed;
+  left: 244px;
+  right: 109px;
+  bottom: 20px;
+  top: 220px;
+  min-height: 100px; }
+  div.form-tree-editor.form-pages div.tree-content {
+    padding: 20px;
+    overflow: auto;
+    position: absolute;
+    right: 0;
+    left: 210px;
+    top: 30px;
+    bottom: 0;
+    width: auto;
+    margin: 0; }
+    div.form-tree-editor.form-pages div.tree-content > div.form-item-set {
+      margin-right: 100px; }
+
+div.root-modal-container div.modal-wrapper div.modal div.modal-dialog div.modal-content {
+  border-radius: 2px; }
+  div.root-modal-container div.modal-wrapper div.modal div.modal-dialog div.modal-content div.modal-header {
+    padding: 10px;
+    min-height: 0; }
+    div.root-modal-container div.modal-wrapper div.modal div.modal-dialog div.modal-content div.modal-header button {
+      margin-top: 5px; }
+    div.root-modal-container div.modal-wrapper div.modal div.modal-dialog div.modal-content div.modal-header h4 {
+      font-size: 12px; }
+
+div.root-modal-container div.modal-wrapper div.modal.with-height div.modal-dialog div.modal-content {
+  position: relative;
+  height: 100%;
+  border-radius: 2px; }
+  div.root-modal-container div.modal-wrapper div.modal.with-height div.modal-dialog div.modal-content div.modal-body {
+    position: absolute;
+    top: 30px;
+    bottom: 50px;
+    right: 0;
+    left: 0;
+    padding: 15px 8px 0 8px; }
+    div.root-modal-container div.modal-wrapper div.modal.with-height div.modal-dialog div.modal-content div.modal-body > div {
+      width: 100%;
+      height: 100%; }
+  div.root-modal-container div.modal-wrapper div.modal.with-height div.modal-dialog div.modal-content div.modal-footer {
+    position: absolute;
+    height: 50px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 8px; }
+
+form.dynamic-form.filter-form {
+  height: auto;
+  width: 100%;
+  padding: 0; }
+  form.dynamic-form.filter-form div.control-content {
+    margin-left: 80px; }
+  form.dynamic-form.filter-form input, form.dynamic-form.filter-form input[disabled=true] {
+    padding: 2px;
+    height: 30px;
+    font-size: 12px;
+    border-color: #ddd !important;
+    border-radius: 2px; }
+  form.dynamic-form.filter-form div.form-group {
+    display: inline-block;
+    padding: 0;
+    margin: 0 5px 0px 0;
+    border-bottom: none;
+    max-height: 26px;
+    white-space: nowrap; }
+    form.dynamic-form.filter-form div.form-group label.control-label {
+      margin: 0;
+      padding: 0 4px 0 0;
+      display: inline-block;
+      height: 24px;
+      float: none;
+      vertical-align: top;
+      width: auto !important; }
+    form.dynamic-form.filter-form div.form-group .control-content {
+      display: inline-block;
+      margin: 0 10px 0 0; }
+    form.dynamic-form.filter-form div.form-group .control-content:first-child {
+      margin: 0; }
+    form.dynamic-form.filter-form div.form-group .form-control {
+      height: 26px; }
+    form.dynamic-form.filter-form div.form-group select {
+      padding: 2px;
+      height: 26px;
+      font-size: 12px;
+      border-color: #ddd !important;
+      border-radius: 2px; }
+    form.dynamic-form.filter-form div.form-group .input-group {
+      max-width: 200px; }
+    form.dynamic-form.filter-form div.form-group .form-help {
+      display: none; }
+  form.dynamic-form.filter-form > div.form-group > div.control-content > div.form-item-set div.hbox > div.form-group {
+    margin-bottom: 5px; }
+  form.dynamic-form.filter-form div.form-group.form-number div.control-content {
+    max-width: 100px !important; }
+  form.dynamic-form.filter-form div.form-item-set {
+    border: none;
+    padding: 0;
+    /*margin:0 10px;*/ }
+    form.dynamic-form.filter-form div.form-item-set label.item-set-title {
+      float: left;
+      width: 75px;
+      text-align: right;
+      padding-top: 2px; }
+    form.dynamic-form.filter-form div.form-item-set label.item-set-title::after {
+      content: ":"; }
+    form.dynamic-form.filter-form div.form-item-set div.item-set-content {
+      margin-left: 80px; }
+  form.dynamic-form.filter-form div.form-group.has-feedback label {
+    color: #444 !important; }
+  form.dynamic-form.filter-form div.form-group.has-feedback select {
+    border-color: #ccc !important; }
+  form.dynamic-form.filter-form div.form-group.has-feedback input {
+    border-color: #ccc !important; }
+  form.dynamic-form.filter-form div.form-group.has-feedback div.control-content .form-control {
+    padding-right: 2px !important; }
+  form.dynamic-form.filter-form fieldset.form-item-set {
+    float: left;
+    width: 75px;
+    text-align: right;
+    padding-top: 2px; }
+    form.dynamic-form.filter-form fieldset.form-item-set > legend {
+      font-size: 12px;
+      float: left;
+      border: 1px;
+      width: 76px; }
+    form.dynamic-form.filter-form fieldset.form-item-set > legend::after {
+      content: ":"; }
+    form.dynamic-form.filter-form fieldset.form-item-set > div.item-set-content {
+      float: left;
+      margin-left: 80px; }
+    form.dynamic-form.filter-form fieldset.form-item-set .form-control {
+      min-width: 100px; }
+
+div.with-chars {
+  position: relative; }
+  div.with-chars > span {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-weight: bold;
+    color: #ccc; }
+  div.with-chars > input.form-control {
+    padding-right: 60px !important; }
+
+div.with-copy {
+  position: relative; }
+  div.with-copy > button {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    height: 20px; }
+  div.with-copy > input.form-control {
+    padding-right: 60px !important; }
