@@ -43,7 +43,7 @@ export function loadSetting(urlRoot:string): PromiseLike<IBackEndConsoleSetting>
         var entities = lib.getEntities();
         var linkBuilders = {};
         entities.forEach(e => linkBuilders[e] = (ids: any[], svc) =>
-            `/ap/entity/detail/${e}/${svc}?id=${ids.join('/')}`)
+            `/ap/entity/${e}/detail/${svc}?id=${ids.join('/')}`)
         setupEntityLinkBuilder([linkBuilders], "");
 
         var tm = new ApiTableManager.ApiTableManager(apiForms);

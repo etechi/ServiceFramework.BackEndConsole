@@ -137,7 +137,7 @@ export default function build(lib: ApiMeta.Library, ctn: IPageContent): IPageRen
     if (globalActions.length > 0) {
         headActionBuilders = globalActions.map(a => {
             var cond = a.attr.ConditionExpression ? new Function('return ' + a.attr.ConditionExpression) : () => true;
-            const linkBase = `/ap/entity/${a.action.Name}/${entity}/${cfg.service}`;
+            const linkBase = `/ap/entity/${entity}/${a.action.Name}/${cfg.service}`;
             return {
                 build: (r: any, idx: any) => {
                     return cond.call(r) ?
@@ -167,7 +167,7 @@ export default function build(lib: ApiMeta.Library, ctn: IPageContent): IPageRen
         actionBuilders = listItemActions.map(a => {
             var cond = a.attr.ConditionExpression ? new Function('return ' + a.attr.ConditionExpression) : () => true;
             if (a.type == ActionType.ContextForm || a.type == ActionType.ContextView) {
-                const linkBase = `/ap/entity/${a.action.Name}/${cfg.entity}/${cfg.service}`;
+                const linkBase = `/ap/entity/${cfg.entity}/${a.action.Name}/${cfg.service}`;
                 return {
                     build: (r: any, idx: any) => {
                         return cond.call(r) ?
@@ -178,7 +178,7 @@ export default function build(lib: ApiMeta.Library, ctn: IPageContent): IPageRen
                 }
             }
             else if (a.type == ActionType.ContextQuery) {
-                const linkBase = `/ap/entity/list/${cfg.entity}/${cfg.service}`;
+                const linkBase = `/ap/entity/${cfg.entity}/list/${cfg.service}`;
                 var startQuery = (id: any) => {
                     lib.call(
                         controller.Name,
@@ -215,7 +215,7 @@ export default function build(lib: ApiMeta.Library, ctn: IPageContent): IPageRen
 
         });
     } 
-    var headerLinks = !readonly && CreateAction ? [{ to: `/ap/entity/new/${entity}/${cfg.service}`, text: '添加' + entityTitle }] : null;
+    var headerLinks = !readonly && CreateAction ? [{ to: `/ap/entity/${entity}/new/${cfg.service}`, text: '添加' + entityTitle }] : null;
 
     return {
         head: (ctn: IPageContentRefer) =>

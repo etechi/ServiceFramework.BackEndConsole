@@ -12,7 +12,7 @@ const pages = {
 
         var title = attrValues.Title || entityTitle + (mgr ? "管理" : "");
         return {
-            Path:`/ap/entity/list/${entity}/${svc}`,
+            Path:`/ap/entity/${entity}/list/${svc}`,
             Title: title,
             Links:[],
             Content: {
@@ -28,7 +28,7 @@ const pages = {
     new(lib: ApiMeta.Library, entity: string, svc: string): IPageConfig {
         const entityTitle = lib.getEntityTitle(entity) || entity;
         return {
-            Path: `/ap/entity/new/${entity}/${svc}`,
+            Path: `/ap/entity/${entity}/new/${svc}`,
             Title: '新建' + entityTitle,
             Links: [],
             Content: {
@@ -44,7 +44,7 @@ const pages = {
     detail(lib: ApiMeta.Library, entity: string, svc: string): IPageConfig {
         const entityTitle = lib.getEntityTitle(entity) || entity;
         return {
-            Path: `/ap/entity/detail/${entity}/${svc}`,
+            Path: `/ap/entity/${entity}/detail/${svc}`,
             Title: entityTitle,
             Links: [],
             Content: {
@@ -62,8 +62,8 @@ const pages = {
 export default function resolve(lib: ApiMeta.Library, path: string): IPageConfig{
     if (!path.startsWith("/ap/entity/"))
         return;
-    var parts = path.split('/');
-    var p = pages[parts[3]];
+    var parts = path.split('/');// [0]/[1]ap/[2]entity/[3]${entity}/[4]detail/[5]${svc}
+    var p = pages[parts[4]];
     if (!p) return;
-    return p(lib, parts[4], parts[5]);
+    return p(lib, parts[3], parts[5]);
 }
