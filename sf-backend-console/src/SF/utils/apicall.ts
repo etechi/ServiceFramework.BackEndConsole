@@ -14,6 +14,9 @@ var _accessToken=null;
 export function setAccessToken(token:string):void{
     _accessToken=token;
 }
+export function getAccessToken(){
+    return _accessToken;
+}
 export interface IQueryPaging {
     offset?: number;
     limit?: number;

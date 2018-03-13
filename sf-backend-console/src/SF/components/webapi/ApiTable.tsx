@@ -245,7 +245,7 @@ export class ApiTable extends React.Component<ApiTableProps, state>
                                     {
                                         content: "导出筛选数据",
                                         onClick: () => {
-                                            window.open(`/api/QueryExport/Export?Controller=${this.props.controller}&Action=${this.props.action}&Format=excel&Argument=${JSON.stringify(this.state.filterValue)}`);
+                                            window.open(`/api/BackEndConsoleExport/Export?Service=${this.props.controller}&Method=${this.props.action}&Mode=table&Format=excel&Argument=${encodeURIComponent(JSON.stringify(this.state.filterValue))}&Token=${encodeURIComponent(apicall.getAccessToken())}`);
                                         }
                                     }
                                 ]
