@@ -68,7 +68,19 @@ function handleContextAction(
         title: '正在执行',
         children: '正在执行' + action.Title + ',请稍后...'
     });
-    lib.call(controller, action.Name, { [action.Parameters[0].Name]: id[0] }, null).then(re => {
+    var args={};
+    if(action.HeavyParameter)
+    {
+        if(action.Parameters.length==1) 
+            args[lib.type(action.Parameters[0].Type).Properties[0].Name]=id[0]
+        else
+            args[action.HeavyParameter]={
+                [lib.type(action.Parameters.filter(p=>p.Name==action.HeavyParameter)[0].Type).Properties[0].Name]:id[0]
+            };
+    }
+    else
+        args[action.Parameters[0].Name]=id[0];
+    lib.call(controller, action.Name, args, null).then(re => {
         refresh();
         mExecuting.resolve();
     }, e => {
