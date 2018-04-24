@@ -52,7 +52,7 @@ function itemAdjuest(item: FI.FormItem, ctx: FI.ItemCreateContext) {
         if (key) 
             ctx.itemAdjuster(key,item,ctx);
     }
-
+    item.onAdjusted();
     return item;
 }
 

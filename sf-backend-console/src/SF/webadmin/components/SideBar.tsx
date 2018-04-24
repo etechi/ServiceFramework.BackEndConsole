@@ -166,7 +166,7 @@ export class Container extends React.Component<ContainerProps, ContainerState> {
                                 key={i2}
                                 name={cat.Title}
                                 icon={cat.FontIcon}
-                                isActive={cat.Children?cat.Children.filter(c => c.Link == curPath).length>0:false}
+                                isActive={cat.Children?cat.Children.filter(c => curPath.startsWith(c.Link)).length>0:false}
                             >
                                 {cat.Children ? cat.Children.map((item, i3) => 
                                     <MenuItem
@@ -174,7 +174,7 @@ export class Container extends React.Component<ContainerProps, ContainerState> {
                                         name={item.Title}
                                         icon={item.FontIcon}
                                         to={item.Link}
-                                        isActive={item.Link == curPath}
+                                        isActive={curPath.startsWith(item.Link)}
                                     />
                                 ):null}
                             </MenuCategory>

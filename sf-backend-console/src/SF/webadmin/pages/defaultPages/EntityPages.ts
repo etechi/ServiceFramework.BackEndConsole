@@ -12,11 +12,11 @@ const pages = {
 
         var title = attrValues.Title || entityTitle + (mgr ? "管理" : "");
         return {
-            Path:`/ap/entity/${entity}/list/${svc}`,
+            Path:`/ap/entity/${entity}/`,
             Title: title,
             Links:[],
             Content: {
-                Path:'',
+                Path:'', 
                 Config : JSON.stringify({
                     entity: entity,
                     service : svc
@@ -42,6 +42,8 @@ const pages = {
         }
     },
     detail(lib: ApiMeta.Library, entity: string, svc: string): IPageConfig {
+        var ec=lib.getEntityController(entity);
+        var isReadonly=ec.Methods.filter(m=>m.Name=="LoadForEdit" || m.Name=="Update").length<2;
         const entityTitle = lib.getEntityTitle(entity) || entity;
         return {
             Path: `/ap/entity/${entity}/detail/${svc}`,
@@ -51,7 +53,8 @@ const pages = {
                 Path: '',
                 Config: JSON.stringify({
                     entity: entity,
-                    service: svc
+                    service: svc,
+                    readonly: isReadonly
                 }),
                 Type: "EntityDetail"
             }
@@ -63,7 +66,7 @@ export default function resolve(lib: ApiMeta.Library, path: string): IPageConfig
     if (!path.startsWith("/ap/entity/"))
         return;
     var parts = path.split('/');// [0]/[1]ap/[2]entity/[3]${entity}/[4]detail/[5]${svc}
-    var p = pages[parts[4]];
+    var p = pages[parts[4] || "list"];
     if (!p) return;
     return p(lib, parts[3], parts[5]);
 }

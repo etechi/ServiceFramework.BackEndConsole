@@ -7,6 +7,7 @@ import {EntityTable} from "../webapi/EntityTable";
 import {Link} from "react-router-dom";
 import {buildEntityLink} from "../../utils/EntityLinkBuilder";
 import {showEntityTableModal,showEntityModal} from "./EntityModal";
+import { isNullOrUndefined } from 'util';
 
 function treeSort(items: any[], parentField: string) {
     var roots = [];
@@ -351,6 +352,8 @@ class LargeSingleEntityPicker extends React.Component<EntityPickerProps, LargeSi
             //    } }
             //    onClose={() => this.showModal(false) }
             }).promise.then(id=>{
+                if(id===undefined)
+                    return;
                 this.props.onChange(!id?null:this.props.dynamicEntityType ? this.props.entity+"-"+id: id);
             });
         //this.setState({ modalVisible: visible });

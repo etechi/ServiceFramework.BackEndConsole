@@ -103,6 +103,10 @@ export abstract class FormItem implements Editors.IObjectField{
             help:help
         }
     }
+    onAdjusted(){
+        if(this.componentProps.disabled)
+            this.componentProps.placeholder="-";
+    }
 }
 
 var regFloat = /^(-?\d+)(\.\d*)?$/;

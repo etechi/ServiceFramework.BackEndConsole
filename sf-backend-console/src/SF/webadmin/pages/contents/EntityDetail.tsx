@@ -11,7 +11,7 @@ import * as uri from "../../../utils/uri";
 
 export default function build(lib: ApiMeta.Library, ctn: IPageContent): IPageRender {
     var cfg = JSON.parse(ctn.Config);
-    var readonly = cfg.ReadOnly;
+    var readonly = cfg.readonly;
     var entity = cfg.entity;
     const entityTitle = lib.getEntityTitle(entity) || entity;
 
@@ -26,6 +26,7 @@ export default function build(lib: ApiMeta.Library, ctn: IPageContent): IPageRen
                     id={uri.getQueryValue("id",this.props.location.search)}
                     controller={controller.Name}
                     serviceId={cfg.service}
+                    readonly={readonly}
                     onBuildSubmitPanel={(p, s, cmds) => {
                         this.props.head(cmds);
                         return <div></div>;

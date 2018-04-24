@@ -149,10 +149,12 @@ export class ApiTable extends React.Component<ApiTableProps, state>
             summaryRequired: this.state.pgTotal == 0,
         };
         this.setState({ status: "数据载入中..." });
+        var args=this.state.args;
+        if(args && args.Id && args.Id.Id==="") delete args.Id;
         return ApiTableManager.defaultTableManager().library().call(
             this.props.controller,
             this.props.action,
-            this.state.args || {},
+            args || {},
             { paging: pg, serviceId: this.props.serviceId })
             .then((re: any) => {
                 var total = re.Total || this.state.pgTotal;

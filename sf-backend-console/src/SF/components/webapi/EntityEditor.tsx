@@ -32,7 +32,7 @@ export class EntityEditor extends React.Component<EntityEditorProps, state>{
     constructor(props: EntityEditorProps) {
         super(props);
         if (props.id instanceof Array && !props.readonly)
-            throw "多主键对象不支持编辑";
+            throw "多主键对象不支持编辑"; 
         this.state = {
             value: props.id ? null : this.getEmptyEntity()
         };
@@ -42,6 +42,8 @@ export class EntityEditor extends React.Component<EntityEditorProps, state>{
         if (this.props.loadAction === null)
             return { lib, act: null };
         var act = lib.action(this.props.controller, this.props.loadAction || "LoadForEdit");
+        if(!act)
+            act = lib.action(this.props.controller, "Get");
         if (!act)
             throw "实体编辑器找不到动作:" + this.props.controller + "/" + this.props.loadAction;
         return { lib, act };
@@ -101,7 +103,6 @@ export class EntityEditor extends React.Component<EntityEditorProps, state>{
         });
     }
     componentDidMount() {
-        console.log("1111");
         if (this.props.id)
             wait.start(() =>
                 this.loadValue(this.props.id).then(re => {
@@ -268,7 +269,7 @@ export class EntityEditor extends React.Component<EntityEditorProps, state>{
                 readonly={this.props.readonly}
                 controller={this.props.controller}
                 serviceId={this.props.serviceId}
-                action={this.props.readonly ? "@" + this.props.loadAction : id ? (this.props.updateAction || "Update") : (this.props.createAction || "Create") }
+                action={this.props.readonly ? "@" + act.Name : curAction.Name }
                 value={this.state.value}
                 onChange={(v) => {
                     console.log(v) 
