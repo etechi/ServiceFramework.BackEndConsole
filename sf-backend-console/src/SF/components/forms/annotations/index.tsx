@@ -99,8 +99,8 @@ const attrs: { [index: string]: AttrInitializer} = {
         (item as FI.FormField).editor = "rich-editor";
     },
     "SF.Sys.Annotations.TimeSpanAttribute"(item, values, ctx) {
-        if (item.itemType != FI.FormItemType.Field)
-            throw "时间只能是简单字段:" + item.formField;
+        //if (item.itemType != FI.FormItemType.Field)
+         //   throw "时间只能是简单字段:" + item.formField;
         (item as FI.FormField).editor = "time-editor";
     },
     "SF.Sys.Annotations.MultipleLinesAttribute"(item, values, ctx) {
