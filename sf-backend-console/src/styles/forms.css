@@ -580,3 +580,6 @@ div.with-copy {
     height: 20px; }
   div.with-copy > input.form-control {
     padding-right: 60px !important; }
+
+div.react-datepicker-popper {
+  z-index: 1000; }

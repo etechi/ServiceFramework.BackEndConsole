@@ -7,7 +7,7 @@ import * as Page from "../components/Page"
 import { EntityTable, IActionBuilder } from "../../components/webapi/EntityTable";
 import { Link } from "react-router-dom";
 import * as ApiMeta from "../../utils/ApiMeta";
-import * as PageCache from "./PageCache";
+import {PageCache} from "./PageCache";
 import { ICachedPage, IPageContentRefer } from "./PageTypes";
 import PageHeader from "./PageHeader";
 
@@ -21,15 +21,16 @@ interface state {
 }
 
 
-export default function BuildPage(lib: ApiMeta.Library) {
+export default function BuildPage(lib: ApiMeta.Library,permissions:{[index:string]:string}) {
+    var pc=new PageCache(permissions);
     return class AutoPage extends React.Component<IServicePageProps, state> {
         constructor(props: IServicePageProps) {
             super(props);
             var path = props.location.pathname;
-            var p = PageCache.tryLoad(path);
+            var p = pc.tryLoad(path);
             this.state = { page: p};
             if (!p)
-                PageCache.load(lib, path).then(p =>
+            pc.load(lib, path).then(p =>
                     this.setState({ page: p})
                 );
         }
@@ -37,11 +38,11 @@ export default function BuildPage(lib: ApiMeta.Library) {
             var newPath = nextProps.location.pathname;
             if (this.state.page && this.state.page.path == newPath)
                 return;
-            var p = PageCache.tryLoad(newPath);
+            var p = pc.tryLoad(newPath);
             if (p)
                 this.setState({ page: p });
             else
-                PageCache.load(lib, newPath).then(p =>
+                pc.load(lib, newPath).then(p =>
                     this.setState({ page: p})
                 );
         } 

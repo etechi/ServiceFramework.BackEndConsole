@@ -6,15 +6,17 @@ import { ICachedPage, IPageConfig, IPageContent } from "./PageTypes";
 import EntityList from "./contents/EntityList";
 import EntityNew from "./contents/EntityNew";
 import EntityDetail from "./contents/EntityDetail";
+import EntityEdit from "./contents/EntityEdit";
 
 const contentBuilders = {
     EntityList,
     EntityNew,
-    EntityDetail
+    EntityDetail,
+    EntityEdit
 };
 
-export function build(lib: ApiMeta.Library, cfg:IPageConfig): ICachedPage{
-    var re = contentBuilders[cfg.Content.Type](lib, cfg.Content);
+export async function build(lib: ApiMeta.Library, cfg:IPageConfig,permissions:{[index:string]:string}): Promise<ICachedPage>{
+    var re = await contentBuilders[cfg.Content.Type](lib, cfg.Content,permissions);
     return {
         path: cfg.Path,
         title: cfg.Title,

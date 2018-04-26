@@ -8,6 +8,7 @@ import {createBrowserHistory} from 'history';
 var browserHistory=createBrowserHistory();
 //import {DynamicFormProps} from '../forms/DynamicForm';
 import * as Editors from "../editors";
+import { bool } from 'prop-types';
 
 export interface EntityEditorProps {
     id?: string|number | any[];
@@ -21,6 +22,8 @@ export interface EntityEditorProps {
     noReturn?:boolean;
     loadAction?: string;
     hideSubmitPanel?: boolean;
+    disableCreate?:boolean;
+    disableRemove?:boolean;
     onBuildSubmitPanel?: (props: Editors.IBaseEditorProps, state: Editors.IFormState, children?: React.ReactNode) => JSX.Element;
     onSubmitSuccess?(result:any): void;
 }
@@ -202,8 +205,8 @@ export class EntityEditor extends React.Component<EntityEditorProps, state>{
         var id = this.state.value && act ? lib.tryGetIdent(this.state.value, act.Type) || this.state.value.Id : this.props.id;
         if ((id instanceof Array) && !id[0]) id = null;
 
-        var createAction = lib.action(this.props.controller, this.props.createAction || "Create");
-        var removeAction = lib.action(this.props.controller, "Remove");
+        var createAction = this.props.disableCreate?null: lib.action(this.props.controller, this.props.createAction || "Create");
+        var removeAction = this.props.disableRemove?null:lib.action(this.props.controller, "Remove");
 
         var createSupported = !!createAction;
         var removeSupported = !!removeAction;
@@ -252,8 +255,8 @@ export class EntityEditor extends React.Component<EntityEditorProps, state>{
         if ((id instanceof Array) && !id[0]) id = null;
 
         var updateAction = lib.action(this.props.controller, this.props.updateAction || "Update");
-        var createAction = lib.action(this.props.controller, this.props.createAction || "Create");
-        var removeAction = lib.action(this.props.controller, "Remove");
+        var createAction = this.props.disableCreate?null:lib.action(this.props.controller, this.props.createAction || "Create");
+        var removeAction = this.props.disableRemove?null:lib.action(this.props.controller, "Remove");
 
         var createSupported = !!createAction;
         var removeSupported = !!removeAction;
@@ -282,7 +285,7 @@ export class EntityEditor extends React.Component<EntityEditorProps, state>{
                 hideSubmitPanel={this.props.hideSubmitPanel}
                 onBuildSubmitPanel={(props: Editors.IBaseEditorProps, state: Editors.IFormState) => {
                     var cmds = this.buildSubmitPanelInternal(props, state, id, createSupported, removeSupported);
-                    return this.props.onBuildSubmitPanel ? this.props.onBuildSubmitPanel(props, state, cmds as any) : cmds;
+                    return this.props.onBuildSubmitPanel ? this.props.onBuildSubmitPanel(props, state, cmds as any) :<div style={{paddingTop:"10px"}}>{cmds}</div>;
                 } }
                 />
             }

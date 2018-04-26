@@ -1703,6 +1703,9 @@ div.with-copy {
   div.with-copy > input.form-control {
     padding-right: 60px !important; }
 
+div.react-datepicker-popper {
+  z-index: 1000; }
+
 div.data-table {
   min-height: 100px;
   font-size: 12px !important;

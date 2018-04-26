@@ -7,6 +7,8 @@ var moment = require("moment");
 var moment_locale = require("moment/locale/zh-cn");
 moment.locale("zh-cn");
 
+import 'react-datepicker/dist/react-datepicker.css';
+
 export interface DatePickerProps{
     className?: string;
     value?: any;

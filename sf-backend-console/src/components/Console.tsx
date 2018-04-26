@@ -4,6 +4,7 @@ import * as PropTypes from 'prop-types';
 import { Route } from 'react-router';
  
 import Dashboard from './Dashboard';
+import AdminSetting from './AdminSetting';
 
 import * as WA from '../SF/webadmin';
 import { Image } from '../SF/components/utils/Image';
@@ -125,7 +126,7 @@ export default class AppFrame extends React.Component<AppFrameProps, state> {
         return <WA.Application>
             <WA.Header.Container>
                 <WA.Header.Logo>系统管理中心</WA.Header.Logo>
-                {setting ? <WA.Header.Text to={"/admin/" + encodeURIComponent("系统安全") + "/AdminInfo"}>
+                {setting ? <WA.Header.Text to={"/admin/setting/"+setting.User.Id}>
                     <Image className="img-circle" format="c30" res={setting.User.Icon} />
                     <span className="username username-hide-on-mobile">{setting.User.Name}</span>
                 </WA.Header.Text> : null}
@@ -146,6 +147,7 @@ export default class AppFrame extends React.Component<AppFrameProps, state> {
                 null}
             {setting?<Route exact path="/" component={Dashboard}/>:null}
             {setting ? <Route path="/ap" component={setting.AutoPage}/>:null}
+            {setting ? <Route path="/admin/setting/:id" component={AdminSetting}/>:null}
         </WA.Application>
     }
 } 

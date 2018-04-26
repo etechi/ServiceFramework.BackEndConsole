@@ -6,20 +6,25 @@ import { resolve as defaultPageResolve } from "./DefaultPages";
 import { build as buildPage } from "./PageBuilder";
 import { ICachedPage } from "./PageTypes";
 
-var pageCache: { [index: string]: ICachedPage } = {};
-
-export function tryLoad(path: string): ICachedPage {
-    return pageCache[path];
-}
-export function load(lib: ApiMeta.Library, path: string): PromiseLike<ICachedPage> {
-    var p = pageCache[path];
-    if (p) return Promise.resolve(p);
-    return apicall.call("BackEndAdminConsole", "GetPage", { ConsoleIdent: "default", PagePath: path }).then((re: any) => {
+export class PageCache
+{
+    pages: { [index: string]: ICachedPage } = {};
+    permissions:{[index:string]:string};
+    constructor(permissions:{[index:string]:string}){
+        this.permissions=permissions;
+    }
+    tryLoad(path: string): ICachedPage {
+        return this.pages[path];
+    }
+    async load(lib: ApiMeta.Library, path: string): Promise<ICachedPage> {
+        var p = this.pages[path];
+        if (p) return p;
+        var re=<any>await apicall.call("BackEndAdminConsole", "GetPage", { ConsoleIdent: "default", PagePath: path });
         if (!re)
-            re = defaultPageResolve(lib, path);
+        re = await defaultPageResolve(lib, path,this.permissions);
         if (!re)
             return null;
-        return pageCache[path] = buildPage(lib, re);
-    });
+        return this.pages[path] = await buildPage(lib, re,this.permissions);
+    }
 }
         

@@ -5,10 +5,10 @@ import { IPageConfig, IPageContent } from "./PageTypes";
 import EntityPages from "./defaultPages/EntityPages";
 var resolvers = [EntityPages];
 
-export function resolve(lib: ApiMeta.Library, path: string): IPageConfig {
+export async function resolve(lib: ApiMeta.Library, path: string,permissions:{[index:string]:string}): Promise<IPageConfig> {
     for (var i = 0; i < resolvers.length; i++) {
         var r = resolvers[i];
-        var re = r(lib, path);
+        var re = await r(lib, path,permissions);
         if (re) return re;
     }
     return null;

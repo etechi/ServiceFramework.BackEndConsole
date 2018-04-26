@@ -1,14 +1,14 @@
 ﻿import * as React from 'react';
 import { render } from 'react-dom'
 import { Route } from 'react-router'
-import {BrowserRouter} from 'react-router-dom'
+import {BrowserRouter,HashRouter} from 'react-router-dom'
 
-import {createBrowserHistory} from 'history';
+import {createBrowserHistory,createHashHistory} from 'history';
 
 require('./styles/index.css'); 
 
 
-var browserHistory=createBrowserHistory();
+//var browserHistory=createBrowserHistory();
 
 //import  AppFrame from "./components/AppFrame";
 import Console from "./components/Console";
@@ -20,9 +20,9 @@ function main(){
 
 
     render(
-    <BrowserRouter basename={env.root}>
+    <HashRouter basename={env.root}>
         <Route component={Console}/>
-    </BrowserRouter>
+    </HashRouter>
     , document.getElementById('root'))
 
 }
@@ -38,7 +38,7 @@ function removeQuery(s: string) {
     return i == -1 ? s : s.substring(0, i);
 }
 
-browserHistory.listen(l => {
+//browserHistory.listen(l => {
     //var loc = window.location.href;
     //var re = loc.match(/^https?:\/\/[^\/]+\/admin\/[^\/]+\/([^\/]+)$/);
     //var res = removeQuery(re && re[1]);
@@ -60,4 +60,4 @@ browserHistory.listen(l => {
     //    });
     //    return;
     //}
-});
+//});

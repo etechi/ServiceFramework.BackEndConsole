@@ -7,6 +7,7 @@ import * as ApiMeta from "../../../utils/ApiMeta";
 import * as Meta from "../../../utils/Metadata";
 import { show as showModal } from "../../../components/utils/Modal";
 import { IPageContent, IPageRender, IPageContentRefer } from "../PageTypes";
+import * as apicall from '../../../utils/apicall';
 enum ActionType {
     ContextDirectly,
     ContextForm,
@@ -94,11 +95,18 @@ function handleContextAction(
         });
     });
 };
-export default function build(lib: ApiMeta.Library, ctn: IPageContent): IPageRender{
+export default async function build(lib: ApiMeta.Library, ctn: IPageContent,permissions:{[index:string]:string}): Promise<IPageRender>{
     var cfg = JSON.parse(ctn.Config);
     var readonly = cfg.ReadOnly;
     var entity = cfg.entity;
     const entityTitle = lib.getEntityTitle(entity) || entity;
+
+    var perm=permissions[entity];
+    if(!perm)
+        throw "无权访问实体数据：" + cfg.entity;
+    if(!readonly && perm=="ReadOnly")
+        readonly=true;
+
 
     const controller = lib.getEntityController(cfg.entity);
     if (!controller)
@@ -122,6 +130,8 @@ export default function build(lib: ApiMeta.Library, ctn: IPageContent): IPageRen
             case "Query": QueryAction = true; break;
         }
     });
+
+    
 
     var attrValues = Meta.attrFirstValue(controller, Meta.EntityManagerAttribute);
     var entityActions = controller.Methods
@@ -227,7 +237,7 @@ export default function build(lib: ApiMeta.Library, ctn: IPageContent): IPageRen
 
         });
     } 
-    var headerLinks = !readonly && CreateAction ? [{ to: `/ap/entity/${entity}/new/${cfg.service}`, text: '添加' + entityTitle }] : null;
+    var headerLinks = !readonly && CreateAction ? [{ to: `/ap/entity/${entity}/new/${cfg.service || 0}`, text: '添加' + entityTitle }] : null;
 
     return {
         head: (ctn: IPageContentRefer) =>

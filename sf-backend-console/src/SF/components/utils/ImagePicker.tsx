@@ -20,7 +20,8 @@ export class ImagePicker extends React.Component<ImagePickerProps, {}>{
         var onChange = props.onChange;
         delete props.className;
         delete props.onChange;
-        
+        if(!props.value && props.disabled)
+            return <div className="form-control">未指定</div>;
         return <Uploader
             className={`image-picker-control ${this.props.small?"small":this.props.fullWidth ? 'full-width' : ''} ${this.props.className || ''}`}
             onUploaded={(v) => onChange(v) }

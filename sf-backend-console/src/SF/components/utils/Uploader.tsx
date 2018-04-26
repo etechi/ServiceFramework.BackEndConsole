@@ -1,5 +1,5 @@
 ﻿import * as React from 'react';
-
+import * as apicall from '../../utils/apicall'
 export interface file{
     file:any;
     imageUrl:string;
@@ -22,6 +22,7 @@ export function upload(file: any, url?: string ) {
         var xhr = new XMLHttpRequest();
         var fd = new FormData();
         xhr.open("POST", url, true);
+        xhr.setRequestHeader("Authorization","Bearer "+apicall.getAccessToken());
         xhr.onreadystatechange = () => {
             if (xhr.readyState != 4)
                 return;

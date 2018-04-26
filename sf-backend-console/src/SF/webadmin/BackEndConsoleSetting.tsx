@@ -13,6 +13,7 @@ export interface IMenuItem {
     Children?: IMenuItem[]
 }
 export interface IUser{
+    Id:number;
     Name: string;
     Icon: string;
 }
@@ -55,7 +56,7 @@ export function loadSetting(urlRoot:string): PromiseLike<IBackEndConsoleSetting>
             Library: lib,
             User: user,
             MenuItems: setting.MenuItems.reverse(),
-            AutoPage: BuildPage(lib)
+            AutoPage: BuildPage(lib,setting.EntityPermissions)
         };
     });
 }

@@ -4,7 +4,7 @@ import * as Meta from "../../../utils/Metadata";
 
 
 const pages = {
-    list(lib: ApiMeta.Library, entity: string, svc: string): IPageConfig {
+    async list(lib: ApiMeta.Library,permission:string, entity: string, svc: string): Promise<IPageConfig> {
         const entityTitle = lib.getEntityTitle(entity) || entity;
         const controller = lib.getEntityController(entity);
         var attrValues = Meta.attrFirstValue(controller, Meta.EntityManagerAttribute);
@@ -25,7 +25,7 @@ const pages = {
             }
         }
     },
-    new(lib: ApiMeta.Library, entity: string, svc: string): IPageConfig {
+    async new(lib: ApiMeta.Library,permission:string, entity: string, svc: string): Promise<IPageConfig> {
         const entityTitle = lib.getEntityTitle(entity) || entity;
         return {
             Path: `/ap/entity/${entity}/new/${svc}`,
@@ -41,9 +41,28 @@ const pages = {
             }
         }
     },
-    detail(lib: ApiMeta.Library, entity: string, svc: string): IPageConfig {
+    async edit(lib: ApiMeta.Library,permission:string, entity: string, svc: string):Promise< IPageConfig> {
         var ec=lib.getEntityController(entity);
-        var isReadonly=ec.Methods.filter(m=>m.Name=="LoadForEdit" || m.Name=="Update").length<2;
+        var isReadonly=permission=="ReadOnly";
+        const entityTitle = lib.getEntityTitle(entity) || entity;
+        return {
+            Path: `/ap/entity/${entity}/edit/${svc}`,
+            Title: entityTitle,
+            Links: [],
+            Content: {
+                Path: '',
+                Config: JSON.stringify({
+                    entity: entity,
+                    service: svc,
+                    readonly: isReadonly
+                }),
+                Type: "EntityEdit"
+            }
+        }
+    },
+    async detail(lib: ApiMeta.Library,permission:string, entity: string, svc: string):Promise< IPageConfig> {
+        var ec=lib.getEntityController(entity);
+        var isReadonly=permission=="ReadOnly";
         const entityTitle = lib.getEntityTitle(entity) || entity;
         return {
             Path: `/ap/entity/${entity}/detail/${svc}`,
@@ -62,11 +81,13 @@ const pages = {
     }
 }
 
-export default function resolve(lib: ApiMeta.Library, path: string): IPageConfig{
+export default async function resolve(lib: ApiMeta.Library, path: string,permissions:{[index:string]:string}): Promise<IPageConfig>{
     if (!path.startsWith("/ap/entity/"))
         return;
     var parts = path.split('/');// [0]/[1]ap/[2]entity/[3]${entity}/[4]detail/[5]${svc}
     var p = pages[parts[4] || "list"];
     if (!p) return;
-    return p(lib, parts[3], parts[5]);
+    var perm=permissions[parts[3]];
+    if(!perm)return;
+    return await p(lib,perm, parts[3], parts[5]);
 }
