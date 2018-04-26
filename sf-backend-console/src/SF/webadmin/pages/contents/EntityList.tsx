@@ -249,7 +249,7 @@ export default async function build(lib: ApiMeta.Library, ctn: IPageContent,perm
                     a.build(null, i, ()=>ctn().refresh())
                 ) :[])
         ,
-        component: class EntityList extends React.Component<{}>{
+        component: class EntityList extends React.Component<any>{
             constructor(props: any) {
                 super(props);
                 props.head(
@@ -266,6 +266,13 @@ export default async function build(lib: ApiMeta.Library, ctn: IPageContent,perm
                 (this.refs["table"] as any).refresh();
             }
             render() {
+                var q=null;
+                if(this.props.location.search)
+                {
+                    var ps=new URLSearchParams(this.props.location.search);
+                    if(ps.has("q"))
+                        q=ps.get("q");
+                }
                 return <EntityTable
                     ref="table"
                     controller={controller.Name}
@@ -275,7 +282,14 @@ export default async function build(lib: ApiMeta.Library, ctn: IPageContent,perm
                     //titleLinkBuilder={args.titleLinkBuilder}
                     actions={actionBuilders}
                     readonly={readonly}
-                //filterValue={filter}
+                    onQueryChanged={(q)=>{
+                        var ps=new URLSearchParams(this.props.location.search);
+                        ps.set("q",q);
+                        var url=this.props.location.pathname+"?"+ps.toString();
+                        this.props.history.replace(url);
+                    }}
+                    
+                    query={q}
                 />
             }
         }

@@ -32,11 +32,12 @@ export interface DashboardProps {
 //    }
 //});
 
-export default class Dashboard extends React.Component<DashboardProps, {}> {
-    render() {
-        return <div>
-            <h2>系统管理中心</h2>
-            
-        </div>
+export default function createDashboard(setting:any){
+    return class Dashboard extends React.Component<DashboardProps, {}> {
+        render() {
+            return <div>
+                <h1 style={{textAlign:"center",paddingTop:"200px"}}>{setting.Title}</h1>
+            </div>
+        }
     }
 }

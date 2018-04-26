@@ -14,6 +14,7 @@ import PageHeader from "./PageHeader";
 export interface IServicePageProps {
     match: ReactRouter.match<{ path: string }>;
     location: any;
+    history:any;
 }
 
 interface state {
@@ -72,7 +73,8 @@ export default function BuildPage(lib: ApiMeta.Library,permissions:{[index:strin
                                 else this.headChild = head;
                             },
                             location: p.location,
-                            match: p.match
+                            match: p.match,
+                            history:p.history
                         }) : <div>载入中...</div>}
                 </Page.Content>
             </Page.Container>

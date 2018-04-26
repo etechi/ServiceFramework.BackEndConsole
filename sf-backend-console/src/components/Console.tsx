@@ -1,9 +1,9 @@
 ﻿import * as React from 'react';
 import { Location } from 'history';
 import * as PropTypes from 'prop-types';
-import { Route } from 'react-router';
+import { Route,Redirect } from 'react-router';
  
-import Dashboard from './Dashboard';
+import createDashboard from './Dashboard';
 import AdminSetting from './AdminSetting';
 
 import * as WA from '../SF/webadmin';
@@ -125,8 +125,8 @@ export default class AppFrame extends React.Component<AppFrameProps, state> {
         var setting = state.setting;
         return <WA.Application>
             <WA.Header.Container>
-                <WA.Header.Logo>系统管理中心</WA.Header.Logo>
-                {setting ? <WA.Header.Text to={"/admin/setting/"+setting.User.Id}>
+                <WA.Header.Logo>{setting?setting.Title:"..."}</WA.Header.Logo>
+                {setting && setting.User ? <WA.Header.Text to={setting?"/admin/setting/"+setting.User.Id:"/"}>
                     <Image className="img-circle" format="c30" res={setting.User.Icon} />
                     <span className="username username-hide-on-mobile">{setting.User.Name}</span>
                 </WA.Header.Text> : null}
@@ -134,7 +134,7 @@ export default class AppFrame extends React.Component<AppFrameProps, state> {
             </WA.Header.Container>
             {setting ? <WA.SideBar.Container pathPrefix={"/"} menuGroups={setting.MenuItems/* modules.map(m => m.menu) */} curPath={path} >
                 {/*<WA.SideBar.SearchBox></WA.SideBar.SearchBox>*/}
-                <WA.SideBar.MenuItem icon='icon-home' name='首页' to='/' isActive={false}/>
+                {/*<WA.SideBar.MenuItem icon='icon-home' name='首页' to='/' isActive={false}/>*/}
             </WA.SideBar.Container> : null}
             {/*<WA.Footer>footer</WA.Footer>*/}
             {state.state==SigninState.loading?<h3>载入中...</h3>:
@@ -145,9 +145,9 @@ export default class AppFrame extends React.Component<AppFrameProps, state> {
                 message={signin.message} 
                 onChange={(acc,pwd,exec)=>this.handleSigninChanged(acc,pwd,exec)}/>:
                 null}
-            {setting?<Route exact path="/" component={Dashboard}/>:null}
+            {setting? <Route path="/" exact render={()=><Redirect to="/ap/entity/Patient/"/>}/>:null}
             {setting ? <Route path="/ap" component={setting.AutoPage}/>:null}
-            {setting ? <Route path="/admin/setting/:id" component={AdminSetting}/>:null}
+            {setting ? <Route exact path="/admin/setting/:id" component={AdminSetting}/>:null}
         </WA.Application>
     }
 } 

@@ -27,7 +27,8 @@ export interface EntityTableProps {
     linkTarget?: string;
     titleLinkBuilder?(ids: any[]): string;
     readonly?: boolean;
-    filterValue?: any;
+    query?: any;
+    onQueryChanged?(q:any):void;
 }
 
 export class EntityTable extends React.Component<EntityTableProps, {}>
@@ -104,7 +105,8 @@ export class EntityTable extends React.Component<EntityTableProps, {}>
             onRowDoubleClick={rowDoubleClick}
             extraColumns={ecs}
             titleLinkBuilder={p.titleLinkBuilder}
-            filterValue={p.filterValue}
+            query={p.query}
+            onQueryChanged={p.onQueryChanged}
             />
     }
 

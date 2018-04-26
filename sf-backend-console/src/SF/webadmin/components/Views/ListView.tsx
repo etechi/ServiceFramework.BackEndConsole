@@ -29,7 +29,7 @@ export default function ListView(args: ListViewArgs ) {
                 setTimeout(() =>
                     (this.refs["table"] as any).refresh(),
                     1);
-        }
+        } 
         render() {
             var isExact=this.props.match.isExact;
             var refresh = () =>
@@ -59,7 +59,7 @@ export default function ListView(args: ListViewArgs ) {
                             titleLinkBuilder={args.titleLinkBuilder}
                             actions={args.actionBuilders}
                             readonly={args.readonly}
-                            filterValue={filter}
+                            query={filter} 
                             />
                     </Page.Content>
                 </Page.Container>

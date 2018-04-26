@@ -10,7 +10,7 @@ interface EntityTableModalProps {
     //onChange(id: any): void;
     onClose?(id:any): void;
     entityIdent: any;
-    filterValue?: any;
+    query?: any;
 }
 interface EntityTableModalState {
     selectedIdent: any;
@@ -35,7 +35,7 @@ class EntityTableModal extends React.Component<EntityTableModalProps, EntityTabl
                     action={this.props.action}
                     entitySelected={this.state.selectedIdent}
                     linkTarget="_blank"
-                    filterValue={p.filterValue}
+                    query={p.query}
                     onEntitySelected={(e, c) => {
                         var id = e ? e.Id : null;
                         if (c)

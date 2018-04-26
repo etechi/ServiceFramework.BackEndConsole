@@ -345,7 +345,7 @@ class LargeSingleEntityPicker extends React.Component<EntityPickerProps, LargeSi
                 action:s.selectAction,
                 entityIdent:this.props.value || null,
                 title: `选择${p.targetName}`,
-                filterValue: this.props.scopeId ? { [this.props.scopeField]: this.props.scopeId }:null
+                query: this.props.scopeId ? JSON.stringify({args:JSON.stringify({ [this.props.scopeField]: this.props.scopeId}) }):null
             //    onChange={id => {
             //        this.props.onChange(!id?null:this.props.dynamicEntityType ? this.props.entity+"-"+id: id);
             //        this.setState({ modalVisible: false });

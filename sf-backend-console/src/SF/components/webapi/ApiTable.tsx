@@ -35,11 +35,11 @@ export interface ApiTableProps {
     linkTarget?: string;
     rowClassNameGetter?(row: any): string;
     titleLinkBuilder?(ids: any[]): string;
-    filterValue?: any;
+    query?: any;
+    onQueryChanged?(q:any):void;
 }
 interface state {
     cols?: ColumnItem[];
-    args?: any;
     loadKey?: any;
     resolve?: any;
     reject?: any;
@@ -51,7 +51,9 @@ interface state {
     pgTotal?: number;
     pgItemsPerPage?: number;
     status?: string;
-    filterValue?:any;
+    query?:any; //查询状态
+    args?: any;//已提交的参数
+    filter?:any; //正在编辑的参数
 }
 
 function updateColumnWidth(cols: ColumnItem[], idents:string[], idx,width:number) {
@@ -75,26 +77,33 @@ export class ApiTable extends React.Component<ApiTableProps, state>
     constructor(props: any) {
         super(props);
         this.cfg = ApiTableManager.defaultTableManager().table(this.props.controller, this.props.action);
+        var q=props.query || null;
+        if(q)q=JSON.parse(q);
+        var args=q && q.args || null
         this.state = {
-             width: 0, 
+            width: 0, 
             height: 0, 
             cols: [], 
             rows: [], 
-            pgItemsPerPage: 20, 
-            pgOffset: 0, 
-            pgTotal: 0,
-            args:props.filterValue || null,
-            filterValue: props.filterValue || {}
+            pgItemsPerPage:q?q.pgIPP:20, 
+            pgOffset: q?q.pgO:0, 
+            pgTotal: q?q.pgT:0,
+            args:args,
+            filter:args || {},
+            query:q
             };
     }
     componentWillReceiveProps(nextProps: ApiTableProps, nextContext: any): void {
-        if (nextProps.filterValue != this.props.filterValue) {
+        if (nextProps.query != this.props.query) {
+            var q=nextProps.query && JSON.parse(nextProps.query) || {};
             this.setState({
-                args: nextProps.filterValue || null,
-                filterValue: nextProps.filterValue,
+                args:q.args,
+                filter:q.args || {},
+                query: nextProps.query,
                 loadKey: "lk" + (__loadKey++),
-                pgOffset: 0,
-                pgTotal: 0
+                pgOffset: q && q.pgO || 0,
+                pgItemsPerPage:q && q.pgIPP || this.state.pgItemsPerPage,
+                pgTotal: q && q.pgT || 0
             });
         }
     }
@@ -127,6 +136,17 @@ export class ApiTable extends React.Component<ApiTableProps, state>
         })
     }
     handleOnSubmit(data:any) {
+        if(this.props.onQueryChanged)
+        {
+            this.props.onQueryChanged(JSON.stringify({
+                pgO:0,
+                pgIPP:this.state.pgItemsPerPage || 20,
+                pgT:0,
+                args:data
+            })
+            );
+            return Promise.resolve(data);
+        }
         return new Promise<any>((resolve, reject) => {
             this.setState({
                 args: data,
@@ -139,7 +159,9 @@ export class ApiTable extends React.Component<ApiTableProps, state>
         });
     }
     refresh() {
-        this.setState({loadKey: "lk" + (__loadKey++)});
+        this.setState({
+            loadKey: "lk" + (__loadKey++)
+        });
     }
     handleLoad(pgx: any) {
         var pg: apicall.IQueryPaging = {
@@ -211,7 +233,7 @@ export class ApiTable extends React.Component<ApiTableProps, state>
     }
     autoFilterTimer: any = null;
     handleFilterChanged(v: any) {
-        this.setState({ filterValue: v });
+        this.setState({ filter: v });
     }
     render() {
         var rowClassNameGetter = !this.props.rowClassNameGetter ? null : idx => this.props.rowClassNameGetter(this.state.rows[idx] || null);
@@ -222,7 +244,7 @@ export class ApiTable extends React.Component<ApiTableProps, state>
                     controller={this.props.controller}
                     action={this.props.action}
                     hertMode={true}
-                    value={this.state.filterValue}
+                    value={this.state.filter}
                     onChange={v => this.handleFilterChanged(v)}
                     className={"filter-form"}
                     onSubmit={(data) => this.handleOnSubmit(data) }
@@ -235,9 +257,21 @@ export class ApiTable extends React.Component<ApiTableProps, state>
                                     {
                                         content: "清除条件",
                                         onClick: () => {
+                                            if(this.props.onQueryChanged)
+                                            {
+                                                this.props.onQueryChanged(
+                                                    JSON.stringify({
+                                                        pgO:0,
+                                                        pgIPP:this.state.pgItemsPerPage,
+                                                        pgT:0
+                                                    })
+                                                );
+                                                return;
+                                            }
                                             this.setState({
                                                 args: null,
-                                                filterValue: {},
+                                                filter: {},
+                                                query:null,
                                                 loadKey: "lk" + (__loadKey++),
                                                 pgOffset: 0,
                                                 pgTotal: 0
@@ -247,7 +281,7 @@ export class ApiTable extends React.Component<ApiTableProps, state>
                                     {
                                         content: "导出筛选数据",
                                         onClick: () => {
-                                            window.open(`/api/BackEndConsoleExport/Export?Service=${this.props.controller}&Method=${this.props.action}&Mode=table&Format=excel&Argument=${encodeURIComponent(JSON.stringify(this.state.filterValue))}&Token=${encodeURIComponent(apicall.getAccessToken())}`);
+                                            window.open(`/api/BackEndConsoleExport/Export?Service=${this.props.controller}&Method=${this.props.action}&Mode=table&Format=excel&Argument=${encodeURIComponent(JSON.stringify(this.state.args))}&Token=${encodeURIComponent(apicall.getAccessToken())}`);
                                         }
                                     }
                                 ]
@@ -280,6 +314,18 @@ export class ApiTable extends React.Component<ApiTableProps, state>
                         current={this.state.pgOffset}
                         itemsPerPage={this.state.pgItemsPerPage}
                         onClick={(o, c) => {
+                            if(this.props.onQueryChanged)
+                            {
+                                this.props.onQueryChanged(
+                                    JSON.stringify({
+                                        pgO:o,
+                                        pgIPP:c,
+                                        pgT:this.state.pgTotal || 0,
+                                        args:this.state.args
+                                    })
+                                );
+                                return;
+                            }
                             this.setState({ pgOffset: o, pgItemsPerPage: c, loadKey: "lk" + (__loadKey++) });
                         } }
                         /> : null
