@@ -8,6 +8,7 @@ import * as Meta from "../../../utils/Metadata";
 import { show as showModal } from "../../../components/utils/Modal";
 import { IPageContent, IPageRender, IPageContentRefer } from "../PageTypes";
 import * as apicall from '../../../utils/apicall';
+import * as uri from '../../../utils/uri';
 enum ActionType {
     ContextDirectly,
     ContextForm,
@@ -262,16 +263,15 @@ export default async function build(lib: ApiMeta.Library, ctn: IPageContent,perm
                         ) : [])
                 );
             }
-            refresh() {
+            refresh() { 
                 (this.refs["table"] as any).refresh();
             }
             render() {
                 var q=null;
                 if(this.props.location.search)
                 {
-                    var ps=new URLSearchParams(this.props.location.search);
-                    if(ps.has("q"))
-                        q=ps.get("q");
+                    var ps=uri.parseSearch(this.props.location.search);
+                    q=ps.q || null;
                 }
                 return <EntityTable
                     ref="table"
@@ -283,9 +283,9 @@ export default async function build(lib: ApiMeta.Library, ctn: IPageContent,perm
                     actions={actionBuilders}
                     readonly={readonly}
                     onQueryChanged={(q)=>{
-                        var ps=new URLSearchParams(this.props.location.search);
-                        ps.set("q",q);
-                        var url=this.props.location.pathname+"?"+ps.toString();
+                        var ps=uri.parseSearch(this.props.location.search);
+                        ps.q=q;
+                        var url=this.props.location.pathname+"?"+uri.buildSearch(ps);
                         this.props.history.replace(url);
                     }}
                     
