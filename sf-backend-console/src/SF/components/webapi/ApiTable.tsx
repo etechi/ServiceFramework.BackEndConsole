@@ -85,12 +85,12 @@ export class ApiTable extends React.Component<ApiTableProps, state>
             height: 0, 
             cols: [], 
             rows: [], 
-            pgItemsPerPage:q?q.pgIPP:20, 
-            pgOffset: q?q.pgO:0, 
-            pgTotal: q?q.pgT:0,
+            pgItemsPerPage:q && q.pgIPP || 20, 
+            pgOffset: q && q.pgO || 0, 
+            pgTotal: q && q.pgT || 0,
             args:args,
             filter:args || {},
-            query:q
+            query:q 
             };
     }
     componentWillReceiveProps(nextProps: ApiTableProps, nextContext: any): void {
@@ -102,7 +102,7 @@ export class ApiTable extends React.Component<ApiTableProps, state>
                 query: nextProps.query,
                 loadKey: "lk" + (__loadKey++),
                 pgOffset: q && q.pgO || 0,
-                pgItemsPerPage:q && q.pgIPP || this.state.pgItemsPerPage,
+                pgItemsPerPage:q && q.pgIPP || this.state.pgItemsPerPage || 20,
                 pgTotal: q && q.pgT || 0
             });
         }
@@ -165,7 +165,7 @@ export class ApiTable extends React.Component<ApiTableProps, state>
     }
     handleLoad(pgx: any) {
         var pg: apicall.IQueryPaging = {
-            limit: this.state.pgItemsPerPage,
+            limit: this.state.pgItemsPerPage || 20,
             offset: this.state.pgOffset,
             totalRequired: this.state.pgTotal == 0,
             summaryRequired: this.state.pgTotal == 0,

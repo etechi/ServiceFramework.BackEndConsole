@@ -203,7 +203,7 @@ var type_provider = {
         ctl: 'editbox',
         init(it: FormField, ctx: ItemCreateContext) {
             it.componentProps.maxLength = 20;
-            ensureNumber(it, -2^63, 2^63, false);
+            ensureNumber(it, -Math.pow(2,63),Math.pow(2,63), false);
         }
     },
     ulong: {

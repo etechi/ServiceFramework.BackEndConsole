@@ -178,14 +178,16 @@ export default async function build(lib: ApiMeta.Library, ctn: IPageContent,perm
         a.type == ActionType.ContextForm ||
         a.type == ActionType.ContextQuery
     );
+
+    const listAction = lib.action(controller.Name, QueryAction ? 'Query' : 'List');
+    const type = lib.detectListResultType(lib.type(listAction.Type));
+    const ids = lib.getIdentPropNames(type);
+    const getKey = (r: any) =>
+        ids.map(id => r[id]);
+    const getKeyStr = (r: any) =>
+        getKey(r).join('/')
+
     if (listItemActions.length > 0) {
-        const listAction = lib.action(controller.Name, QueryAction ? 'Query' : 'List');
-        const type = lib.detectListResultType(lib.type(listAction.Type));
-        const ids = lib.getIdentPropNames(type);
-        const getKey = (r: any) =>
-            ids.map(id => r[id]);
-        const getKeyStr = (r: any) =>
-            getKey(r).join('/')
                 
         actionBuilders = listItemActions.map(a => {
             var cond = a.attr.ConditionExpression ? new Function('return ' + a.attr.ConditionExpression) : () => true;
@@ -239,6 +241,32 @@ export default async function build(lib: ApiMeta.Library, ctn: IPageContent,perm
         });
     } 
     var headerLinks = !readonly && CreateAction ? [{ to: `/ap/entity/${entity}/new/${cfg.service || 0}`, text: '添加' + entityTitle }] : null;
+    
+    //查找关联查询 
+    lib.getEntities()
+    .map(e=>{var c=lib.getEntityController(e);return {e:e,c:c,m:c.Methods.filter(m=>m.Name=="Query")[0]};})
+    .filter(c=>c.m)
+    .forEach(c=>{
+        var at=lib.type(c.m.Parameters[0].Type)
+       lib.allTypeProperties(at).filter(p=>lib.attrValue(p,Meta.EntityIdentAttribute).Entity==entity).forEach(p=>
+            {
+                if(!actionBuilders)actionBuilders=[];
+                const linkBase = `/ap/entity/${c.e}/`;
+                const title=lib.getEntityTitle(c.e) || c.e;
+                //%7B%22pgO%22%3A0%2C%22pgIPP%22%3A20%2C%22pgT%22%3A0%2C%22args%22%3A%7B%22PatientId%22%3A18401%7D%7D
+                //{"pgO":0,"pgIPP":20,"pgT":0,"args":{"PatientId":18401}}
+                actionBuilders.push({
+                    build: (r: any, idx: any) => {
+                        var id=getKeyStr(r);
+                        var val=p.Name=="Id"?{Id:{Id:id}}:{[p.Name]:id};
+                        var q=encodeURIComponent(JSON.stringify({args:val}));
+                        return <Link key={idx} className="btn btn-xs table-action" title={title} to={linkBase + "?q="+q} >{title}</Link>;
+                    },
+                    textLength:title.length
+                });
+            });
+    });
+
 
     return {
         head: (ctn: IPageContentRefer) =>
