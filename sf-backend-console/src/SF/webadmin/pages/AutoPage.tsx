@@ -48,7 +48,8 @@ export default function BuildPage(lib: ApiMeta.Library,permissions:{[index:strin
                 );
         } 
         header: any;
-        headChild: any;
+        headActions: any;
+        headNav:any;
         render() {
             var p = this.props;
             var page = this.state.page;
@@ -56,21 +57,24 @@ export default function BuildPage(lib: ApiMeta.Library,permissions:{[index:strin
                 <PageHeader
                     ref={h => {
                         this.header = h;
-                        if (this.headChild) {
-                            h.setChildContent(this.headChild);
-                            this.headChild = null;
+                        if (this.headActions) {
+                            h.setChildContent(this.headActions,this.headNav);
+                            this.headActions = null;
+                            this.headNav=null;
                         }
                     }}
                     title={page ? page.title : null}
-                    links={page ? page.links : []}
                 />
                 <Page.Content>
                     {page ? React.createElement(
                         page.component, {
                             ref: "content",
-                            head: (head) => {
-                                if (this.header) this.header.setChildContent(head);
-                                else this.headChild = head;
+                            head: (actions,nav) => {
+                                if (this.header) this.header.setChildContent(actions,nav);
+                                else {
+                                    this.headActions = actions;
+                                    this.headNav=nav;
+                                }
                             },
                             location: p.location,
                             match: p.match,

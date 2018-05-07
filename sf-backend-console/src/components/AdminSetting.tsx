@@ -10,7 +10,7 @@ export default class SigninPage extends React.Component<any> {
         var p = this.props;
         var id=p.match.params.id;
         return <Page.Container>
-            <Page.Header links={[{text:"管理员设置"}]}/>
+            <Page.Header title="管理员设置"/>
             <Page.Content>
             <EntityEditor
                     id={id}

@@ -20,7 +20,7 @@ export async function build(lib: ApiMeta.Library, cfg:IPageConfig,permissions:{[
     return {
         path: cfg.Path,
         title: cfg.Title,
-        links: cfg.Links ? cfg.Links.map(l => ({ to: l.To, text: l.Text })) : [],
+        //links: cfg.Links ? cfg.Links.map(l => ({ to: l.To, text: l.Text })) : [],
         head:re.head,
         component:re.component
     };

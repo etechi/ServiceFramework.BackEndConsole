@@ -3,14 +3,14 @@ export interface IPageContentRefer {
     (): any;
 }
 export interface IPageRender {
-    head?(ctn: IPageContentRefer): any;
+    head?(ctn: IPageContentRefer): {actions?:React.ReactNode,nav?:React.ReactNode};
     component: any;
 }
 export interface ICachedPage{
-    title:string,
+    title:string, 
     path: string,
     head(ctx: IPageContentRefer): any;
-    links: { to?: string, text: string }[];
+    //links: { to?: string, text: string }[];
     component: any,
 }
 
@@ -23,6 +23,5 @@ export interface IPageContent {
 export interface IPageConfig {
     Path: string;
     Title: string;
-    Links: { To?: string, Text: string }[];
     Content: IPageContent
 }

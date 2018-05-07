@@ -168,6 +168,8 @@ var type_provider = {
     bool: {
         ctl: 'checkbox',
         init(it: FormField, ctx: ItemCreateContext) {
+            if(it.optional)
+                it.componentProps.optional=true;
         }
     },
 

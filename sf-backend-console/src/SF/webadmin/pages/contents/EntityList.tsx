@@ -9,6 +9,9 @@ import { show as showModal } from "../../../components/utils/Modal";
 import { IPageContent, IPageRender, IPageContentRefer } from "../PageTypes";
 import * as apicall from '../../../utils/apicall';
 import * as uri from '../../../utils/uri';
+import * as lodash from 'lodash';
+
+
 enum ActionType {
     ContextDirectly,
     ContextForm,
@@ -267,29 +270,58 @@ export default async function build(lib: ApiMeta.Library, ctn: IPageContent,perm
             });
     });
 
+    //查找存储查询
+    var queries=[
+    {Name:"所有",Query:null},
+    {Name:"有效",Query:"{\"LogicState\":\"Enabled\"}"},
+    {Name:"无效",Query:"{\"LogicState\":\"Disabled\"}"},
+    {Name:"删除",Query:"{\"LogicState\":\"Deleted\"}"}
+];
+    const curLinkBase= `/ap/entity/${entity}/`;
 
+    //headerLinks=[{to:'aaa',text:'aaaa'}];
+    function showHead(ctn,search?:string){
+        var curQuery:any=search?uri.parseSearch(search).q:null;
+        if(curQuery)
+        {
+            curQuery=JSON.parse(curQuery).args;
+            if(curQuery)
+            {
+                delete curQuery.Paging;
+                curQuery=JSON.stringify(curQuery);
+            }
+        }
+        return {actions:(headerLinks?headerLinks.map((l, i) =>
+        <Link key={"l" + i} className="btn btn-primary" to={l.to} >{l.text}</Link>
+        ):[])
+        .concat(
+            headActionBuilders ? lodash.flatten(headActionBuilders.map((a, i) =>
+                a.build(null, i, ()=>ctn().refresh())
+            )):[]),
+            nav:queries.map((q,i)=>
+                <Link 
+                    replace={true}
+                    key={i} 
+                    className={"btn btn-sm "+(curQuery==q.Query?"btn-info":"btn-link")}
+                    title={q.Name} 
+                    to={curLinkBase + "?q="+encodeURIComponent(JSON.stringify({args:JSON.parse(q.Query)}))} >{q.Name}</Link>
+                    
+            )
+        };
+    }
     return {
         head: (ctn: IPageContentRefer) =>
-            (headerLinks?headerLinks.map((l, i) =>
-                <Link key={"l" + i} className="btn btn-primary" to={l.to} >{l.text}</Link>
-             ):[])
-            .concat(
-                headActionBuilders ? headActionBuilders.map((a, i) =>
-                    a.build(null, i, ()=>ctn().refresh())
-                ) :[])
+            showHead(ctn)
         ,
         component: class EntityList extends React.Component<any>{
             constructor(props: any) {
                 super(props);
-                props.head(
-                    (headerLinks ? headerLinks.map((l, i) =>
-                        <Link key={"l" + i} className="btn btn-primary" to={l.to} >{l.text}</Link>
-                    ) : [])
-                        .concat(
-                        headActionBuilders ? headActionBuilders.map((a, i) =>
-                            a.build(null, i, () => this.refresh())
-                        ) : [])
-                );
+                var re=showHead(()=>this,props.location.search);
+                props.head(re.actions,re.nav);
+            }
+            componentWillReceiveProps(nextProps: Readonly<any>, nextContext: any){
+                var re=showHead(()=>this,nextProps.location.search);
+                this.props.head(re.actions,re.nav);
             }
             refresh() { 
                 (this.refs["table"] as any).refresh();

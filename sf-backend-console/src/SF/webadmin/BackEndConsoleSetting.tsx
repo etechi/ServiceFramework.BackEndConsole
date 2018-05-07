@@ -18,6 +18,7 @@ export interface IUser{
     Icon: string;
 }
 export interface IBackEndConsoleSetting {
+    Id:number;
     Title:string;
     Library: ApiMeta.Library;
     User: IUser;
@@ -54,6 +55,7 @@ export function loadSetting(urlRoot:string): PromiseLike<IBackEndConsoleSetting>
         //);
         ApiTableManager.setDefaultTableManager(tm);
         return {
+            Id:setting.Id,
             Title:setting.Title,
             Library: lib,
             User: user,

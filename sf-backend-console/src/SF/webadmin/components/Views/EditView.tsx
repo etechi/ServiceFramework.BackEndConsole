@@ -37,7 +37,7 @@ export default function EditView(args: EditViewArgs) {
                                 browserHistory.goBack();
                         }}
                         onBuildSubmitPanel={(props, cmds) =>
-                            <Page.Header links={args.links}>
+                            <Page.Header >{/*nav={args.links}*/}
                                 {cmds}
                             </Page.Header>
                         }/>

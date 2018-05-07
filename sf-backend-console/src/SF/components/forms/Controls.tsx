@@ -196,14 +196,16 @@ export class TextArea extends React.Component<TextAreaProps, { showOptions?: boo
 }
 
 export interface CheckBoxProps extends ControlPropsBase{
+    optional?:boolean;
 }
 export class CheckBox extends React.Component<CheckBoxProps, {}>{
     render() {
         var props = this.props;
-        const {className} = props;
+        const {className,optional} = props;
         return <span
-            onClick={() => { if (!props.disabled) props.onChange(props.value ? false : true) } }
-            className={`check-icon fa ${props.value ? 'fa-check-square-o' : 'fa-square-o'} ${className||''}`}
+            onClick={() => { if (!props.disabled) props.onChange(props.value?false:optional && props.value===false?undefined:true) } }
+            className={`check-icon fa ${props.value ? 'fa-check-square-o' :optional && props.value===undefined?'fa-square':'fa-square-o'} ${className||''}`}
+            title={props.value?"是":props.value===false?"否":"未选择"}
             ></span>
     }
 }

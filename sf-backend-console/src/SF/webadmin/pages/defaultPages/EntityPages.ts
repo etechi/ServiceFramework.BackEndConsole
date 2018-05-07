@@ -14,7 +14,6 @@ const pages = {
         return {
             Path:`/ap/entity/${entity}/`,
             Title: title,
-            Links:[],
             Content: {
                 Path:'', 
                 Config : JSON.stringify({
@@ -30,7 +29,6 @@ const pages = {
         return {
             Path: `/ap/entity/${entity}/new/${svc}`,
             Title: '新建' + entityTitle,
-            Links: [],
             Content: {
                 Path: '',
                 Config: JSON.stringify({
@@ -48,7 +46,6 @@ const pages = {
         return {
             Path: `/ap/entity/${entity}/edit/${svc}`,
             Title: entityTitle,
-            Links: [],
             Content: {
                 Path: '',
                 Config: JSON.stringify({
@@ -67,7 +64,6 @@ const pages = {
         return {
             Path: `/ap/entity/${entity}/detail/${svc}`,
             Title: entityTitle,
-            Links: [],
             Content: {
                 Path: '',
                 Config: JSON.stringify({

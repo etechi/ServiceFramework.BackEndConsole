@@ -4,17 +4,17 @@ import * as apicall from '../../utils/apicall';
 import * as Views from '../components/Views';
 import * as Page from "../components/Page"
 
-export default class PageHeader extends React.Component<{ title: any, links: any }, { chd: any }> {
+export default class PageHeader extends React.Component<{ title: any}, { actions?: React.ReactNode, nav?: React.ReactNode }> {
     constructor(props: any) {
         super(props);
-        this.state = {chd:null};
+        this.state = {actions:null,nav:null};
     }
-    setChildContent(child:any) {
-        this.setState({ chd: child });
+    setChildContent(actions:any,nav:any) {
+        this.setState({ actions: actions,nav:nav });
     }
     render() {
-        return <Page.Header title={this.props.title} links={this.props.links} >
-            {this.state && this.state.chd|| null}
+        return <Page.Header title={this.props.title} nav={this.state && this.state.nav || null} >
+            {this.state && this.state.actions|| null}
         </Page.Header>
     }
 }

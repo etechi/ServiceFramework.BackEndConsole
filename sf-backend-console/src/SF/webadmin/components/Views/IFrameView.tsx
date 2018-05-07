@@ -8,7 +8,7 @@ export default function HelpView(args: HelpViewArgs) {
     return class HelpView extends React.Component<{}, {}>{
         render() {
             return <Page.Container>
-                <Page.Header links={args.links}>
+                <Page.Header >{/*nav={args.links}*/}
                 </Page.Header>
                 <Page.Content>
                     <div className="iframe-page-content" >

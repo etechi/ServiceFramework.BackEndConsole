@@ -8,7 +8,7 @@ import {buildEntityLink} from "../../utils/EntityLinkBuilder";
 
 export interface IActionBuilder {
     textLength: number;
-    build(row: any,idx:number,refresh:()=>void): JSX.Element;
+    build(row: any,idx:number,refresh:()=>void): JSX.Element | JSX.Element[];
 }
 export interface EntityTableProps {
     controller: string;
@@ -57,12 +57,18 @@ export class EntityTable extends React.Component<EntityTableProps, {}>
                     var to = buildEntityLink(entity, keys.map(k => r[k]), this.props.serviceId);
                     if (!to)
                         return null;
-                    return <Link key={idx}
+                    var re=<Link target={p.linkTarget} key={idx}
                         className="btn btn-default btn-xs table-action"
                         to={to}>
                         {this.props.readonly || this.cfg.entityReadonly ? '详细' : '编辑'}
-                    </Link>
-                }, textLength: 2
+                    </Link>;
+                    if(!p.onEntitySelected)
+                        return;
+                    return [
+                        re,
+                        <button key={idx} type="button" className="btn btn-default btn-xs table-action" onClick={() => p.onEntitySelected(r,true)}>选择</button>
+                    ];
+                }, textLength: p.onEntitySelected?5:2
             });
         }
         if (actions.length) {
@@ -73,10 +79,22 @@ export class EntityTable extends React.Component<EntityTableProps, {}>
                 header: "操作",
                 width: 30 + 16 * actions.reduce((s,a)=>s+a.textLength,0),
                 extraCell: (rows, props) => {
-                    var r = rows[props.rowIndex];
-                    return actions.map((a, idx) =>
-                        a.build(r, idx, refresh)
-                    ).filter(e => !!e);
+                    var row = rows[props.rowIndex];
+                    var re:any=[];
+                    for(var i=0;i<actions.length;i++)
+                    {
+                        var r:any=actions[i].build(row, i, refresh);
+                        if(!r) continue;
+                        if(r instanceof Array)
+                        {
+                            for(var j=0;j<r.length;j++)
+                            if(r[j])
+                                re.push(r[j])
+                        }
+                        else
+                            re.push(r);
+                    }
+                    return re;
                 }
             });
         }

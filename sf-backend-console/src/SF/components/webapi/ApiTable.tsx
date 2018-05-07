@@ -56,7 +56,7 @@ interface state {
     filter?:any; //正在编辑的参数
 }
 
-function updateColumnWidth(cols: ColumnItem[], idents:string[], idx,width:number) {
+function updateColumnWidth(cols: ColumnItem[], idents:string[], idx:number,width:number) {
     return cols.map(c => {
         if (c.columnKey != idents[idx])
             return c;
@@ -130,7 +130,7 @@ export class ApiTable extends React.Component<ApiTableProps, state>
         }
     }
     handleColumnResizeEndCallback(w: number, ck: string) {
-        var ps = ck.split('/');
+        var ps =ck && ck.split('/') || [undefined];
         this.setState({
             cols: updateColumnWidth(this.state.cols, ps, 0, w)
         })

@@ -29,7 +29,7 @@ export default function ListView(args: ListViewArgs ) {
                 setTimeout(() =>
                     (this.refs["table"] as any).refresh(),
                     1);
-        } 
+        }  
         render() {
             var isExact=this.props.match.isExact;
             var refresh = () =>
@@ -38,7 +38,7 @@ export default function ListView(args: ListViewArgs ) {
             var filter = fs && JSON.parse(fs) || null; 
             //var filter = this.props.location && this.props.location.query || null;
             return <Page.Container style={{ display: isExact ? 'block' : 'none' } }  >
-                    <Page.Header links={args.links}>
+                    <Page.Header >{/*nav={args.links}*/}
                         {args.header || null}
                         {args.headerLinks && args.headerLinks.map((l, i) =>
                             <Link key={"l"+i} className="btn btn-primary" to= {l.to} >{l.text}</Link>

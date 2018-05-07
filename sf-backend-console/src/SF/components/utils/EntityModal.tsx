@@ -34,6 +34,7 @@ class EntityTableModal extends React.Component<EntityTableModalProps, EntityTabl
                     controller={this.props.controller}
                     action={this.props.action}
                     entitySelected={this.state.selectedIdent}
+                    readonly={true}
                     linkTarget="_blank"
                     query={p.query}
                     onEntitySelected={(e, c) => {
