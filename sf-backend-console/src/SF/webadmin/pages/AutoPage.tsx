@@ -22,8 +22,8 @@ interface state {
 }
 
 
-export default function BuildPage(lib: ApiMeta.Library,permissions:{[index:string]:string}) {
-    var pc=new PageCache(permissions);
+export default function BuildPage(consoleId:number,lib: ApiMeta.Library,permissions:{[index:string]:string}) {
+    var pc=new PageCache(consoleId,permissions);
     return class AutoPage extends React.Component<IServicePageProps, state> {
         constructor(props: IServicePageProps) {
             super(props);

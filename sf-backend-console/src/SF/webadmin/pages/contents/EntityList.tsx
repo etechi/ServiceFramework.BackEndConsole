@@ -6,7 +6,7 @@ import { EntityTable, IActionBuilder } from "../../../components/webapi/EntityTa
 import * as ApiMeta from "../../../utils/ApiMeta";
 import * as Meta from "../../../utils/Metadata";
 import { show as showModal } from "../../../components/utils/Modal";
-import { IPageContent, IPageRender, IPageContentRefer } from "../PageTypes";
+import {IPageContent, IPageRender, IPageContentRefer,IPageBuildContext } from "../PageTypes";
 import * as apicall from '../../../utils/apicall';
 import * as uri from '../../../utils/uri';
 import * as lodash from 'lodash';
@@ -99,7 +99,8 @@ function handleContextAction(
         });
     });
 };
-export default async function build(lib: ApiMeta.Library, ctn: IPageContent,permissions:{[index:string]:string}): Promise<IPageRender>{
+export default async function build(ctn: IPageContent,ctx:IPageBuildContext): Promise<IPageRender>{
+    var {lib, permissions}=ctx;
     var cfg = JSON.parse(ctn.Config);
     var readonly = cfg.ReadOnly;
     var entity = cfg.entity;
@@ -270,17 +271,24 @@ export default async function build(lib: ApiMeta.Library, ctn: IPageContent,perm
             });
     });
 
-    //查找存储查询
-    var queries=[
-    {Name:"所有",Query:null},
-    {Name:"有效",Query:"{\"LogicState\":\"Enabled\"}"},
-    {Name:"无效",Query:"{\"LogicState\":\"Disabled\"}"},
-    {Name:"删除",Query:"{\"LogicState\":\"Deleted\"}"}
-];
+    var consoleId=ctx.consoleId;
+    var settingPath= `entity/${entity}/list/query` ;
+    async function loadQueries()
+    {
+        var re=await apicall.call<any>("BackEndConsoleUISetting", "List", { ConsoleId: consoleId, Path:settingPath});
+        
+        //查找存储查询
+        var queries=re.map(s=>({Name:s.Name,Query:s.Value}));
+        if(queries.length)
+            queries.unshift({Name:"所有",Query:null});
+        return queries;
+    }
+    var queries=await loadQueries();
+
     const curLinkBase= `/ap/entity/${entity}/`;
 
     //headerLinks=[{to:'aaa',text:'aaaa'}];
-    function showHead(ctn,search?:string){
+    function getCurQueryString(search?:string){
         var curQuery:any=search?uri.parseSearch(search).q:null;
         if(curQuery)
         {
@@ -291,37 +299,47 @@ export default async function build(lib: ApiMeta.Library, ctn: IPageContent,perm
                 curQuery=JSON.stringify(curQuery);
             }
         }
-        return {actions:(headerLinks?headerLinks.map((l, i) =>
-        <Link key={"l" + i} className="btn btn-primary" to={l.to} >{l.text}</Link>
-        ):[])
-        .concat(
-            headActionBuilders ? lodash.flatten(headActionBuilders.map((a, i) =>
-                a.build(null, i, ()=>ctn().refresh())
-            )):[]),
-            nav:queries.map((q,i)=>
-                <Link 
-                    replace={true}
-                    key={i} 
-                    className={"btn btn-sm "+(curQuery==q.Query?"btn-info":"btn-link")}
-                    title={q.Name} 
-                    to={curLinkBase + "?q="+encodeURIComponent(JSON.stringify({args:JSON.parse(q.Query)}))} >{q.Name}</Link>
-                    
-            )
-        };
+        return curQuery;
+    }
+    function getHeadComponents(ctn,search?:string){
+        var curQuery=getCurQueryString(search);
+        var idx=queries.map((q,i)=>({q,i})).filter(q=>q.q.Query==curQuery);
+        idx=idx.length?idx[0].i:-1;
+
+        return {
+            actions:(headerLinks?headerLinks.map((l, i) =>
+                <Link key={"l" + i} className="btn btn-primary" to={l.to} >{l.text}</Link>
+                ):[])
+            .concat(
+                headActionBuilders ? lodash.flatten(headActionBuilders.map((a, i) =>
+                    a.build(null, i, ()=>ctn().refresh())
+                )):[]),
+                nav:queries.map((q,i)=>
+                    <li className={(idx==i?"active":"")}><Link 
+                        replace={true}
+                        key={i} 
+                        
+                        title={q.Name} 
+                        to={curLinkBase + "?q="+encodeURIComponent(JSON.stringify({args:JSON.parse(q.Query)}))} >{q.Name}</Link></li>
+                ),
+                queryIndex:idx
+            };
     }
     return {
         head: (ctn: IPageContentRefer) =>
-            showHead(ctn)
+            getHeadComponents(ctn)
         ,
-        component: class EntityList extends React.Component<any>{
+        component: class EntityList extends React.Component<any,any>{
             constructor(props: any) {
                 super(props);
-                var re=showHead(()=>this,props.location.search);
+                var re=getHeadComponents(()=>this,props.location.search);
                 props.head(re.actions,re.nav);
+                this.state={queryIndex:re.queryIndex};
             }
             componentWillReceiveProps(nextProps: Readonly<any>, nextContext: any){
-                var re=showHead(()=>this,nextProps.location.search);
-                this.props.head(re.actions,re.nav);
+                var re=getHeadComponents(()=>this,nextProps.location.search);
+                nextProps.head(re.actions,re.nav);
+                this.setState({queryIndex:re.queryIndex});
             }
             refresh() { 
                 (this.refs["table"] as any).refresh();
@@ -333,6 +351,50 @@ export default async function build(lib: ApiMeta.Library, ctn: IPageContent,perm
                     var ps=uri.parseSearch(this.props.location.search);
                     q=ps.q || null;
                 }
+                var dropdownActions:any=[];
+                if(this.state.queryIndex==-1 && q && q.indexOf("\"args\":{")!=-1)
+                    dropdownActions.push(
+                        {
+                            text:"保存当前查询",
+                            action:async ()=>{
+                                var name=prompt("请输入查询名称");
+                                if(!name)
+                                    return;
+
+                                var q=getCurQueryString(this.props.location.search);
+                                if(!q)
+                                    q=null;
+                                await apicall.call<any>("BackEndConsoleUISetting", "Update", {},{ ConsoleId: consoleId, Path:settingPath,Name:name,Value:q});
+                                queries=await loadQueries();
+                                var re=getHeadComponents(()=>this,this.props.location.search);
+                                this.props.head(re.actions,re.nav);
+                                this.setState({queryIndex:re.queryIndex})
+                            }
+                        }
+                    );
+                if(this.state.queryIndex>0)
+                    dropdownActions.push({
+                        text:"删除查询("+queries[this.state.queryIndex].Name+")",
+                        action:async ()=>{
+                            if(!confirm("您要删除当前查询么?"))
+                                return;
+                            await apicall.call<any>(
+                                "BackEndConsoleUISetting", 
+                                "Update", 
+                                {},
+                                {
+                                    ConsoleId: consoleId,
+                                    Path:settingPath,
+                                    Name:queries[this.state.queryIndex].Name,
+                                    Value:null
+                                });
+                            queries=await loadQueries();
+                            var re=getHeadComponents(()=>this,this.props.location.search);
+                            this.props.head(re.actions,re.nav);
+                            this.setState({queryIndex:re.queryIndex})
+                        }
+                    });
+
                 return <EntityTable
                     ref="table"
                     controller={controller.Name}
@@ -348,7 +410,7 @@ export default async function build(lib: ApiMeta.Library, ctn: IPageContent,perm
                         var url=this.props.location.pathname+"?"+uri.buildSearch(ps);
                         this.props.history.replace(url);
                     }}
-                    
+                    dropdownActions={dropdownActions}
                     query={q}
                 />
             }

@@ -125,7 +125,7 @@ export default class AppFrame extends React.Component<AppFrameProps, state> {
         var setting = state.setting;
         return <WA.Application>
             <WA.Header.Container>
-                <WA.Header.Logo>{setting?setting.Title:"..."}</WA.Header.Logo>
+                <WA.Header.Logo>{setting?setting.Title:""}</WA.Header.Logo>
                 {setting && setting.User ? <WA.Header.Text to={setting?"/admin/setting/"+setting.User.Id:"/"}>
                     <Image className="img-circle" format="c30" res={setting.User.Icon} />
                     <span className="username username-hide-on-mobile">{setting.User.Name}</span>

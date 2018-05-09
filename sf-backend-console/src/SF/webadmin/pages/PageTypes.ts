@@ -1,4 +1,5 @@
-﻿
+﻿import * as ApiMeta from "../../utils/ApiMeta";
+
 export interface IPageContentRefer {
     (): any;
 }
@@ -24,4 +25,10 @@ export interface IPageConfig {
     Path: string;
     Title: string;
     Content: IPageContent
+}
+export interface IPageBuildContext{
+    consoleId:number;
+    lib: ApiMeta.Library;
+    path:string;
+    permissions:{[index:string]:string}
 }

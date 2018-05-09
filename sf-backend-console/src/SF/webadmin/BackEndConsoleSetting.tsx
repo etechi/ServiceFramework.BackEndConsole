@@ -60,7 +60,7 @@ export function loadSetting(urlRoot:string): PromiseLike<IBackEndConsoleSetting>
             Library: lib,
             User: user,
             MenuItems: setting.MenuItems.reverse(),
-            AutoPage: BuildPage(lib,setting.EntityPermissions)
+            AutoPage: BuildPage(setting.Id,lib,setting.EntityPermissions)
         };
     });
 }

@@ -24,9 +24,11 @@ export class Header extends React.Component<IHeaderProps, any>{
                     ) || null
                 }
             </ul> */}
-            <div className="page-toolbar" style={{float:"left"}}>
+            <div className="tabbable-line" style={{float:"left",margin:"5px 0 0 16px"}}>
+            <div className="nav nav-tabs">
                 {this.props.nav}
                 </div>
+            </div>
             <div className="page-toolbar">
                   {this.props.children}
             </div>

@@ -29,6 +29,8 @@ export interface EntityTableProps {
     readonly?: boolean;
     query?: any;
     onQueryChanged?(q:any):void;
+    dropdownActions?:{text:string,action:()=>void}[];
+
 }
 
 export class EntityTable extends React.Component<EntityTableProps, {}>
@@ -63,7 +65,7 @@ export class EntityTable extends React.Component<EntityTableProps, {}>
                         {this.props.readonly || this.cfg.entityReadonly ? '详细' : '编辑'}
                     </Link>;
                     if(!p.onEntitySelected)
-                        return;
+                        return re;
                     return [
                         re,
                         <button key={idx} type="button" className="btn btn-default btn-xs table-action" onClick={() => p.onEntitySelected(r,true)}>选择</button>
@@ -125,6 +127,7 @@ export class EntityTable extends React.Component<EntityTableProps, {}>
             titleLinkBuilder={p.titleLinkBuilder}
             query={p.query}
             onQueryChanged={p.onQueryChanged}
+            dropdownActions={p.dropdownActions}
             />
     }
 

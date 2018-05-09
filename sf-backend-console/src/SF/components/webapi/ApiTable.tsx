@@ -37,6 +37,7 @@ export interface ApiTableProps {
     titleLinkBuilder?(ids: any[]): string;
     query?: any;
     onQueryChanged?(q:any):void;
+    dropdownActions?:{text:string,action:()=>void}[];
 }
 interface state {
     cols?: ColumnItem[];
@@ -237,6 +238,7 @@ export class ApiTable extends React.Component<ApiTableProps, state>
     }
     render() {
         var rowClassNameGetter = !this.props.rowClassNameGetter ? null : idx => this.props.rowClassNameGetter(this.state.rows[idx] || null);
+        var tableProps=this.props;
         return <div ref="dom" className={`api-table data-table ${this.props.className || ''} ${this.props.onRowClick?'':'selectable'}`}>
             {!this.props.hideQueryPanel && this.cfg.hasParams && <div ref="filter" className="filter-panel">
                 <ApiForm
@@ -284,7 +286,7 @@ export class ApiTable extends React.Component<ApiTableProps, state>
                                             window.open(`/api/BackEndConsoleExport/Export?Service=${this.props.controller}&Method=${this.props.action}&Mode=table&Format=excel&Argument=${encodeURIComponent(JSON.stringify(this.state.args))}&Token=${encodeURIComponent(apicall.getAccessToken())}`);
                                         }
                                     }
-                                ]
+                                ].concat(tableProps.dropdownActions && tableProps.dropdownActions.map(a=>({content:a.text,onClick:a.action})) || [])
                             }/>
                         </div>
 

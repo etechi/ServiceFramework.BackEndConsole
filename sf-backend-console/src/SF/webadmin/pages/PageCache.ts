@@ -1,16 +1,18 @@
 ﻿import * as apicall from '../../utils/apicall';
 
-import * as ApiMeta from "../../utils/ApiMeta";
 
 import { resolve as defaultPageResolve } from "./DefaultPages";
 import { build as buildPage } from "./PageBuilder";
 import { ICachedPage } from "./PageTypes";
+import * as ApiMeta from "../../utils/ApiMeta";
 
 export class PageCache
 {
     pages: { [index: string]: ICachedPage } = {};
     permissions:{[index:string]:string};
-    constructor(permissions:{[index:string]:string}){
+    consoleId:number;
+    constructor(consoleId:number,permissions:{[index:string]:string}){
+        this.consoleId=consoleId;
         this.permissions=permissions;
     }
     tryLoad(path: string): ICachedPage {
@@ -24,7 +26,7 @@ export class PageCache
         re = await defaultPageResolve(lib, path,this.permissions);
         if (!re)
             return null;
-        return this.pages[path] = await buildPage(lib, re,this.permissions);
+        return this.pages[path] = await buildPage(re,{consoleId:this.consoleId,lib,path,permissions:this.permissions});
     }
 }
         

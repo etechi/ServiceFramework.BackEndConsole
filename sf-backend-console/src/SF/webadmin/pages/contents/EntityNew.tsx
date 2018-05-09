@@ -6,9 +6,10 @@ import { EntityEditor} from "../../../components/webapi/EntityEditor";
 import * as ApiMeta from "../../../utils/ApiMeta";
 import * as Meta from "../../../utils/Metadata";
 import { show as showModal } from "../../../components/utils/Modal";
-import { IPageContent, IPageRender, IPageContentRefer } from "../PageTypes";
+import { IPageContent, IPageRender, IPageContentRefer ,IPageBuildContext} from "../PageTypes";
 
-export default async function build(lib: ApiMeta.Library, ctn: IPageContent,permissions:{[index:string]:string}): Promise<IPageRender>{
+export default async function build( ctn: IPageContent,ctx:IPageBuildContext): Promise<IPageRender>{
+    var {lib}=ctx;
     var cfg = JSON.parse(ctn.Config);
     var readonly = cfg.ReadOnly;
     var entity = cfg.entity;

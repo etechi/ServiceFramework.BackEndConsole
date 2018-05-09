@@ -62,7 +62,7 @@ export default class SigninPage extends React.Component<SigninPageProps> {
                                 <div className="form-group clearfix field-Name">
                                     <label className="control-label">&nbsp;</label>
                                     <div className="control-content field-size-sm">
-                                        <button disabled={p.executing} onClick={() => p.onChange(p.account,p.password,true)} type="button" className="btn btn-primary">
+                                        <button  disabled={p.executing} onClick={() => p.onChange(p.account,p.password,true)} type="submit" className="btn btn-primary">
                                             <span className={['fa', p.executing?'fa-':'fa-key'].concat(p.executing?["fa-spin"]:[]).join(' ')}></span>
                                             登 录
                                         </button>

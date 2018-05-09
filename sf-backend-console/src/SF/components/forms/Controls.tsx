@@ -205,6 +205,7 @@ export class CheckBox extends React.Component<CheckBoxProps, {}>{
         return <span
             onClick={() => { if (!props.disabled) props.onChange(props.value?false:optional && props.value===false?undefined:true) } }
             className={`check-icon fa ${props.value ? 'fa-check-square-o' :optional && props.value===undefined?'fa-square':'fa-square-o'} ${className||''}`}
+            style={optional && props.value===undefined?{color:"#ccc",fontSize:"14px !important"}:{fontSize:"14px !important"}}
             title={props.value?"是":props.value===false?"否":"未选择"}
             ></span>
     }
