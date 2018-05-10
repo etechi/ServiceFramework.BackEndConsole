@@ -101,11 +101,11 @@ const dateRender: IColumnRender = {
             ctx.rows.map(
                 r => {
                     var v = getter(r);
-                    return v ? time.format(v, "Y-MM-DD HH:mm") : "";
+                    return v ? time.format(v) : "";
                 });//"Y-MM-DD HH:mm"
         return {
             align: "center",
-            width: 16,
+            width: 14,
             render: (a) => values[a.rowIndex]
         }
     }

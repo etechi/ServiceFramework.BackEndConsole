@@ -24,6 +24,41 @@ export default async function build( ctn: IPageContent,ctx:IPageBuildContext): P
     {
 
     }
+    const getAction = lib.action(controller.Name, 'LoadForEdit') || lib.action(controller.Name, 'Get');
+    const type = lib.type(getAction.Type);
+ 
+    const ids = lib.getIdentPropNames(type);
+    const getKey = (r: any) =>
+        ids.map(id => r[id]);
+    const getKeyStr = (r: any) =>
+        getKey(r).join('/')
+
+    var actionBuilders:any=[];
+        //查找关联查询 
+        lib.getEntities()
+        .map(e=>{var c=lib.getEntityController(e);return {e:e,c:c,m:c.Methods.filter(m=>m.Name=="Query")[0]};})
+        .filter(c=>c.m)
+        .forEach(c=>{
+            if(!ctx.permissions[c.e])
+                return;
+            var at=lib.type(c.m.Parameters[0].Type);
+            lib.allTypeProperties(at).filter(p=>lib.attrValue(p,Meta.EntityIdentAttribute).Entity==entity).forEach(p=>
+                {
+                    const linkBase = `/ap/entity/${c.e}/`;
+                    const title=lib.getEntityTitle(c.e) || c.e;
+                    //%7B%22pgO%22%3A0%2C%22pgIPP%22%3A20%2C%22pgT%22%3A0%2C%22args%22%3A%7B%22PatientId%22%3A18401%7D%7D
+                    //{"pgO":0,"pgIPP":20,"pgT":0,"args":{"PatientId":18401}}
+                    actionBuilders.push({
+                        build: (r: any, idx: any) => {
+                            var id=getKeyStr(r);
+                            var val=p.Name=="Id"?{Id:{Id:id}}:{[p.Name]:id};
+                            var q=encodeURIComponent(JSON.stringify({args:val}));
+                            return <li><Link key={idx} className="btn btn-xs table-action" title={title} to={linkBase + "?q="+q} >{title}</Link></li>;
+                        },
+                        textLength:title.length
+                    });
+                }); 
+        });
 
     return {
         component: class EntityList extends React.Component<{location:any,head:any}>{
@@ -34,7 +69,10 @@ export default async function build( ctn: IPageContent,ctx:IPageBuildContext): P
                     serviceId={cfg.service}
                     readonly={readonly}
                     onBuildSubmitPanel={(p, s, cmds) => {
-                        this.props.head(cmds);
+                        var navs=null;
+                        if(s.curValue && actionBuilders)
+                            navs=actionBuilders.map(b=>b.build(s.curValue,1));
+                        this.props.head(cmds,navs);
                         return <div></div>;
                     }}
                />

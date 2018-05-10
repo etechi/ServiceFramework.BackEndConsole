@@ -31,6 +31,7 @@ interface EditBoxState {
     copied?: boolean;
     editValue?: any;
     curValue?: any;
+    pwdVisible?:boolean;
 }
 export class EditBox extends React.Component<EditBoxProps, EditBoxState>{
     constructor(props: EditBoxProps) {
@@ -131,7 +132,7 @@ export class EditBox extends React.Component<EditBoxProps, EditBoxState>{
         else
             input = <input
                  ref='input' 
-                type={type || 'text'}  
+                type={type=='password' && this.state.pwdVisible?'text':type  || 'text'}  
                 className='form-control' 
                 onChange={e => this.handleChange(e) }
                 {...{ value, placeholder, disabled,maxLength}}
@@ -164,7 +165,7 @@ export class EditBox extends React.Component<EditBoxProps, EditBoxState>{
                     null}
             </div>;
 
-        if (maxLength && !disabled && !this.props.error && this.props.showChars)
+        if (maxLength && !disabled && !this.props.error && this.props.showChars && this.props.type!="password")
             input = <div className='with-chars'>
                 {input}<span>{`${(props.value || "").length}/${props.maxLength}`}</span>
             </div>
@@ -172,6 +173,13 @@ export class EditBox extends React.Component<EditBoxProps, EditBoxState>{
         if (disabled && this.props.copyable) {
             input = <div className='with-copy'>
                 {input}<button type="button" className="btn btn-default btn-xs" ref="copy"><span className={`fa fa-${this.state && this.state.copied?'check':'copy'}`}></span> 复制</button>
+            </div>
+        }
+        if(this.props.type=="password"){
+            input = <div className='with-copy'>
+                {input}<button type="button" className="btn btn-default btn-xs" onClick={()=>{
+                    this.setState({pwdVisible:!this.state.pwdVisible})
+                }} ><span className={`fa fa-eye`}></span></button>
             </div>
         }
         return input;
