@@ -251,9 +251,12 @@ export default async function build(ctn: IPageContent,ctx:IPageBuildContext): Pr
     .map(e=>{var c=lib.getEntityController(e);return {e:e,c:c,m:c.Methods.filter(m=>m.Name=="Query")[0]};})
     .filter(c=>c.m)
     .forEach(c=>{
-        var at=lib.type(c.m.Parameters[0].Type)
+        if(!ctx.permissions[c.e])
+            return;
+        var at=lib.type(c.m.Parameters[0].Type);
        lib.allTypeProperties(at).filter(p=>lib.attrValue(p,Meta.EntityIdentAttribute).Entity==entity).forEach(p=>
             {
+
                 if(!actionBuilders)actionBuilders=[];
                 const linkBase = `/ap/entity/${c.e}/`;
                 const title=lib.getEntityTitle(c.e) || c.e;
