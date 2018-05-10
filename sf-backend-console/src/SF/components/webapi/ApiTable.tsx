@@ -204,7 +204,7 @@ export class ApiTable extends React.Component<ApiTableProps, state>
             }
             else
                 this.setState({ resolve: null, reject: null, status: '数据载入失败!' })
-            return e;
+            return Promise.reject(e);
         })
     }
     handleDataAvailable(data: any) {
