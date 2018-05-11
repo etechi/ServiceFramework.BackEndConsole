@@ -29,8 +29,10 @@ interface state {
     form?:{
         account?:string;
         password?:string;
+        captcha?:string;
         executing?:boolean;
         message?:string;
+
     },
     state?:SigninState,
     setting?: Setting.IBackEndConsoleSetting;
@@ -64,14 +66,14 @@ export default class AppFrame extends React.Component<AppFrameProps, state> {
         });
 
     }
-    handleSigninChanged( acc:string, pwd:string, exec:boolean){
-        this.setState({form:{account:acc,password:pwd,executing:exec,message:""}});
+    handleSigninChanged( acc:string, pwd:string,captcha:string,captchaPrefix:string, exec:boolean){
+        this.setState({form:{account:acc,password:pwd,captcha:captcha,executing:exec,message:""}});
         if(!exec)
             return;
-        if(!acc || !pwd)
+        if(!acc || !pwd || !captcha)
         {
             this.setState({
-                form:{account:acc,password:pwd,executing:false,message:"请输入账号密码"}
+                form:{account:acc,password:pwd,executing:false,message:"请输入账号密码及验证码"}
             });
             return;
         }
@@ -84,7 +86,8 @@ export default class AppFrame extends React.Component<AppFrameProps, state> {
                 Ident:acc,
                 Password:pwd,
                 Mode:'AccessToken',
-                ClientId:'admin.console'
+                ClientId:'admin.console',
+                CaptchaCode:captchaPrefix+captcha
             })
             .end((err,re) => {
                 if(err){
@@ -141,9 +144,10 @@ export default class AppFrame extends React.Component<AppFrameProps, state> {
             state.state==SigninState.unsigned?<SigninPage 
                 account={signin.account} 
                 password={signin.password} 
+                captcha={signin.captcha}
                 executing={signin.executing} 
                 message={signin.message} 
-                onChange={(acc,pwd,exec)=>this.handleSigninChanged(acc,pwd,exec)}/>:
+                onChange={(acc,pwd,captcha,prefix,exec)=>this.handleSigninChanged(acc,pwd,captcha,prefix,exec)}/>:
                 null}
             {setting? <Route path="/" exact render={()=><Redirect to="/ap/entity/Patient/"/>}/>:null}
             {setting ? <Route path="/ap" component={setting.AutoPage}/>:null}

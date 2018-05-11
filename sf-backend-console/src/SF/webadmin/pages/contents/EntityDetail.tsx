@@ -35,7 +35,7 @@ export default async function build( ctn: IPageContent,ctx:IPageBuildContext): P
 
     var actionBuilders:any=[];
         //查找关联查询 
-        lib.getEntities()
+    lib.getEntities()
         .map(e=>{var c=lib.getEntityController(e);return {e:e,c:c,m:c.Methods.filter(m=>m.Name=="Query")[0]};})
         .filter(c=>c.m)
         .forEach(c=>{

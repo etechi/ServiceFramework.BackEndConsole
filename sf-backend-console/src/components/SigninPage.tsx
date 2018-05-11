@@ -1,23 +1,46 @@
 ﻿import * as React from 'react'
+import * as apicall from '../SF/utils/apicall';
 
 //import * as  api  from "../webapi-all";
 export interface SigninPageProps {
-    onChange?:(account:string,password:string,executing?:boolean)=>void;
+    onChange?:(account:string,password:string,captcha:string,prefix:string,executing?:boolean)=>void;
     account?:string;
     password?:string;
+    captcha?:string;
     message?:string;
     executing?:boolean;
+   
 } 
 
-export default class SigninPage extends React.Component<SigninPageProps> {
+interface state{
+    captchaPrefix?:string;
+    captchaImage?:string;
+}
+export default class SigninPage extends React.Component<SigninPageProps,state> {
     constructor(props: SigninPageProps) {
         super(props);
+        this.state={};
+        this.updateCaptchaImage();
+    }
+    updateCaptchaImage(){
+        apicall.call<any>(
+            "CaptchaImage","CreateImage",
+            {},
+            {
+                Width:200,
+                ForeColor:"#403333ff",
+                Target:"User.Signin"
+            }
+        ).then(re=>{
+            this.setState({captchaPrefix:re.CodePrefix,captchaImage:re.Image})
+        });
     }
     render() {
         var p = this.props;
+        var s = this.state;
         return <div>
             <br/>
-            <p>请您先登录管理系统：</p>
+            <h2>登录系统</h2>
             <br />
             <form className="dynamic-form ">
 
@@ -36,7 +59,7 @@ export default class SigninPage extends React.Component<SigninPageProps> {
                                             maxLength={50} 
                                             value={p.account} 
                                             disabled={p.executing}
-                                            onChange={(e) => p.onChange(e.target.value,p.password,p.executing)} 
+                                            onChange={(e) => p.onChange(e.target.value,p.password,p.captcha,s.captchaPrefix,p.executing)} 
                                             />
                                     </div>
                                 </div>
@@ -49,20 +72,32 @@ export default class SigninPage extends React.Component<SigninPageProps> {
                                             maxLength={50} 
                                             value={p.password} 
                                             disabled={p.executing}
-                                            onChange={(e) => p.onChange(p.account,e.target.value,p.executing)} 
+                                            onChange={(e) => p.onChange(p.account,e.target.value,p.captcha,s.captchaPrefix,p.executing)} 
                                             />
                                     </div>
                                 </div>
+                                {s.captchaImage? <div className="form-group clearfix field-Name">
+                                    <label className="control-label">验证码</label>
+                                    <div className="control-content field-size-sm">
+                                        <input 
+                                            type="text" 
+                                            className="form-control" 
+                                            maxLength={6} 
+                                            value={p.captcha} 
+                                            disabled={p.executing}
+                                            onChange={(e) => p.onChange(p.account,p.password,e.target.value,s.captchaPrefix,p.executing)} 
+                                            />
+                                        <img src={s.captchaImage} onClick={()=>this.updateCaptchaImage()}/>
+                                    </div>
+                                </div>:null} 
                                 {p.message ? <div className="form-group clearfix field-Name">
-                                    <label className="control-label">&nbsp;</label>
-                                    <div className="control-content">
+                                    <div className="control-content" style={{marginLeft:"150px"}}>
                                         {p.message}
                                     </div>
                                 </div> : null}
                                 <div className="form-group clearfix field-Name">
-                                    <label className="control-label">&nbsp;</label>
-                                    <div className="control-content field-size-sm">
-                                        <button  disabled={p.executing} onClick={() => p.onChange(p.account,p.password,true)} type="submit" className="btn btn-primary">
+                                    <div className="control-content field-size-sm"style={{marginLeft:"150px"}}>
+                                        <button  disabled={p.executing} onClick={() => p.onChange(p.account,p.password,p.captcha,s.captchaPrefix,true)} type="submit" className="btn btn-primary">
                                             <span className={['fa', p.executing?'fa-':'fa-key'].concat(p.executing?["fa-spin"]:[]).join(' ')}></span>
                                             登 录
                                         </button>

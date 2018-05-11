@@ -101,11 +101,11 @@ const enum_picker_builder = (ctx: BuildContext,item: FI.FormField) => {
     );
     if (optional)
         options.unshift(<option key={-1} value={''}>--</option>);
-    else if (!ctx.editMode)
-        options.unshift(<option key={-1} value={''}>{`请选择${item.entity.Title}`}</option>);
-    var defaultValue = type.Properties[0].Name;
+    //else if (!ctx.editMode)
+    //    options.unshift(<option key={-1} value={''}>{`请选择${item.entity.Title}`}</option>);
+    var defaultValue = undefined;//type.Properties[0].Name;
     var editMode = ctx.editMode;
-
+ 
     
    var width=type.Properties.reduce((w, p) => Math.max(w, calcStringRenderWidth(p.Title,100)), 0);
    props = readonlyPropFilter(ctx, props);
@@ -115,9 +115,10 @@ const enum_picker_builder = (ctx: BuildContext,item: FI.FormField) => {
        width: width,
        render: (field: Editors.IInputProps) => {
            var newField = assign(field, {} as any);
-           var value = newField.value || (editMode && !optional ? defaultValue : "");
+           var value = newField.value || (editMode && !optional ? defaultValue : undefined);
            delete newField.value;
            return <Select {...newField} {...props} value={value}>
+                {value?null:<option key={-1} value={''}>{`请选择${item.entity.Title}`}</option>}
                {options }
            </Select>
        }
