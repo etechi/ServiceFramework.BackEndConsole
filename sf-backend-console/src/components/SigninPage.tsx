@@ -3,23 +3,23 @@ import * as apicall from '../SF/utils/apicall';
 
 //import * as  api  from "../webapi-all";
 export interface SigninPageProps {
-    onChange?:(account:string,password:string,captcha:string,prefix:string,executing?:boolean)=>void;
-    account?:string;
-    password?:string;
-    captcha?:string;
+    onSubmit?:(account:string,password:string,captcha:string)=>void;
     message?:string;
     executing?:boolean;
-   
 } 
 
 interface state{
     captchaPrefix?:string;
     captchaImage?:string;
+    account?:string;
+    password?:string;
+    captcha?:string;
+    
 }
 export default class SigninPage extends React.Component<SigninPageProps,state> {
     constructor(props: SigninPageProps) {
         super(props);
-        this.state={};
+        this.state={account:"",password:"",captcha:""};
         this.updateCaptchaImage();
     }
     updateCaptchaImage(){
@@ -57,9 +57,9 @@ export default class SigninPage extends React.Component<SigninPageProps,state> {
                                             className="form-control" 
                                             placeholder="请输入账号" 
                                             maxLength={50} 
-                                            value={p.account} 
+                                            value={s.account} 
                                             disabled={p.executing}
-                                            onChange={(e) => p.onChange(e.target.value,p.password,p.captcha,s.captchaPrefix,p.executing)} 
+                                            onChange={(e) => this.setState({account:e.target.value})} 
                                             />
                                     </div>
                                 </div>
@@ -70,9 +70,9 @@ export default class SigninPage extends React.Component<SigninPageProps,state> {
                                             type="password" 
                                             className="form-control" 
                                             maxLength={50} 
-                                            value={p.password} 
+                                            value={s.password} 
                                             disabled={p.executing}
-                                            onChange={(e) => p.onChange(p.account,e.target.value,p.captcha,s.captchaPrefix,p.executing)} 
+                                            onChange={(e) => this.setState({password:e.target.value})} 
                                             />
                                     </div>
                                 </div>
@@ -83,9 +83,9 @@ export default class SigninPage extends React.Component<SigninPageProps,state> {
                                             type="text" 
                                             className="form-control" 
                                             maxLength={6} 
-                                            value={p.captcha} 
+                                            value={s.captcha} 
                                             disabled={p.executing}
-                                            onChange={(e) => p.onChange(p.account,p.password,e.target.value,s.captchaPrefix,p.executing)} 
+                                            onChange={(e) => this.setState({captcha:e.target.value})} 
                                             />
                                         <img src={s.captchaImage} onClick={()=>this.updateCaptchaImage()}/>
                                     </div>
@@ -97,7 +97,7 @@ export default class SigninPage extends React.Component<SigninPageProps,state> {
                                 </div> : null}
                                 <div className="form-group clearfix field-Name">
                                     <div className="control-content field-size-sm"style={{marginLeft:"150px"}}>
-                                        <button  disabled={p.executing} onClick={() => p.onChange(p.account,p.password,p.captcha,s.captchaPrefix,true)} type="submit" className="btn btn-primary">
+                                        <button  disabled={p.executing} onClick={(e) =>{e.preventDefault();e.stopPropagation();p.onSubmit(s.account,s.password,s.captchaPrefix+s.captcha)}} type="submit" className="btn btn-primary">
                                             <span className={['fa', p.executing?'fa-':'fa-key'].concat(p.executing?["fa-spin"]:[]).join(' ')}></span>
                                             登 录
                                         </button>

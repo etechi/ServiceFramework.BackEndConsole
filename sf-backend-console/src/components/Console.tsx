@@ -27,9 +27,6 @@ enum SigninState {
 }
 interface state {
     form?:{
-        account?:string;
-        password?:string;
-        captcha?:string;
         executing?:boolean;
         message?:string;
 
@@ -66,14 +63,12 @@ export default class AppFrame extends React.Component<AppFrameProps, state> {
         });
 
     }
-    handleSigninChanged( acc:string, pwd:string,captcha:string,captchaPrefix:string, exec:boolean){
-        this.setState({form:{account:acc,password:pwd,captcha:captcha,executing:exec,message:""}});
-        if(!exec)
-            return;
+    handleSignin( acc:string, pwd:string,captcha:string){
+        this.setState({form:{executing:true,message:""}});
         if(!acc || !pwd || !captcha)
         {
             this.setState({
-                form:{account:acc,password:pwd,executing:false,message:"请输入账号密码及验证码"}
+                form:{executing:false,message:"请输入账号密码及验证码"}
             });
             return;
         }
@@ -87,16 +82,14 @@ export default class AppFrame extends React.Component<AppFrameProps, state> {
                 Password:pwd,
                 Mode:'AccessToken',
                 ClientId:'admin.console',
-                CaptchaCode:captchaPrefix+captcha
-            })
+                CaptchaCode:captcha
+            }) 
             .end((err,re) => {
                 if(err){
                     this.setState({
                         form: {
-                            account: acc,
-                            password: pwd,
                             executing: false,
-                            message: "登录失败，请检查账号密码是否正确！"
+                            message: re.body.Message || "登录失败，请重试"
                         }
                     });
                     return;
@@ -113,8 +106,6 @@ export default class AppFrame extends React.Component<AppFrameProps, state> {
             }, err => {
                 this.setState({
                     form: {
-                        account: acc,
-                        password: pwd,
                         executing: false,
                         message: err
                     }
@@ -142,12 +133,9 @@ export default class AppFrame extends React.Component<AppFrameProps, state> {
             {/*<WA.Footer>footer</WA.Footer>*/}
             {state.state==SigninState.loading?<h3>载入中...</h3>:
             state.state==SigninState.unsigned?<SigninPage 
-                account={signin.account} 
-                password={signin.password} 
-                captcha={signin.captcha}
                 executing={signin.executing} 
                 message={signin.message} 
-                onChange={(acc,pwd,captcha,prefix,exec)=>this.handleSigninChanged(acc,pwd,captcha,prefix,exec)}/>:
+                onSubmit={(acc,pwd,captcha)=>this.handleSignin(acc,pwd,captcha)}/>:
                 null}
             {setting? <Route path="/" exact render={()=><Redirect to="/ap/entity/Patient/"/>}/>:null}
             {setting ? <Route path="/ap" component={setting.AutoPage}/>:null}
