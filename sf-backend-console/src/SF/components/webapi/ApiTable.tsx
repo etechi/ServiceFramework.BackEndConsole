@@ -55,6 +55,7 @@ interface state {
     query?:any; //查询状态
     args?: any;//已提交的参数
     filter?:any; //正在编辑的参数
+    cfg: TableConfig;
 }
 
 function updateColumnWidth(cols: ColumnItem[], idents:string[], idx:number,width:number) {
@@ -74,14 +75,14 @@ function updateColumnWidth(cols: ColumnItem[], idents:string[], idx:number,width
 var __loadKey = 0;
 export class ApiTable extends React.Component<ApiTableProps, state>
 {
-    cfg: TableConfig;
+    
     constructor(props: any) {
         super(props);
-        this.cfg = ApiTableManager.defaultTableManager().table(this.props.controller, this.props.action);
         var q=props.query || null;
         if(q)q=JSON.parse(q);
         var args=q && q.args || null
         this.state = {
+            cfg : ApiTableManager.defaultTableManager().table(this.props.controller, this.props.action),
             width: 0, 
             height: 0, 
             cols: [], 
@@ -95,9 +96,10 @@ export class ApiTable extends React.Component<ApiTableProps, state>
             };
     }
     componentWillReceiveProps(nextProps: ApiTableProps, nextContext: any): void {
-        if (nextProps.query != this.props.query) {
+        if (nextProps.query != this.props.query || nextProps.controller!=this.props.controller || nextProps.action!=this.props.action) {
             var q=nextProps.query && JSON.parse(nextProps.query) || {};
             this.setState({
+                cfg: ApiTableManager.defaultTableManager().table(nextProps.controller, nextProps.action),
                 args:q.args,
                 filter:q.args || {},
                 query: nextProps.query,
@@ -107,6 +109,7 @@ export class ApiTable extends React.Component<ApiTableProps, state>
                 pgTotal: q && q.pgT || 0
             });
         }
+
     }
 
     _sizeMonitor: () => void;
@@ -121,7 +124,7 @@ export class ApiTable extends React.Component<ApiTableProps, state>
         });
         var isSelectTable = !this.props.onRowClick;
         this.setState({
-            cols: this.cfg.columns.map(c => c.build({ isSelectTable: isSelectTable, rows: null, lib: ApiTableManager.defaultTableManager().library() }))
+            cols: this.state.cfg.columns.map(c => c.build({ isSelectTable: isSelectTable, rows: null, lib: ApiTableManager.defaultTableManager().library() }))
         });
     }
     componentWillUnmount() {
@@ -211,7 +214,7 @@ export class ApiTable extends React.Component<ApiTableProps, state>
         var lib = ApiTableManager.defaultTableManager().library();
         var isSelectTable = !!this.props.onRowClick;
         var itemLinkBuilder = this.props.titleLinkBuilder;
-        var cols = this.cfg.columns.map(c =>
+        var cols = this.state.cfg.columns.map(c =>
             c.build({
                 rows: data,
                 lib: ApiTableManager.defaultTableManager().library(),
@@ -239,8 +242,9 @@ export class ApiTable extends React.Component<ApiTableProps, state>
     render() {
         var rowClassNameGetter = !this.props.rowClassNameGetter ? null : idx => this.props.rowClassNameGetter(this.state.rows[idx] || null);
         var tableProps=this.props;
+        var cfg=this.state.cfg;
         return <div ref="dom" className={`api-table data-table ${this.props.className || ''} ${this.props.onRowClick?'':'selectable'}`}>
-            {!this.props.hideQueryPanel && this.cfg.hasParams && <div ref="filter" className="filter-panel">
+            {!this.props.hideQueryPanel && cfg.hasParams && <div ref="filter" className="filter-panel">
                 <ApiForm
                     ref="form"
                     controller={this.props.controller}
@@ -253,43 +257,42 @@ export class ApiTable extends React.Component<ApiTableProps, state>
                     autoSubmitTimeout={1000}
                     onBuildSubmitPanel={(props: Editors.IBaseEditorProps, state: Editors.IFormState) =>
                         <div className="btn-group btn-group-sm search">
-                            <button className="btn btn-primary " disabled={state.submitting} onClick={() => this.handleSubmit() }><i className={state.submitting ? 'fa fa-cog fa-spin' : 'fa fa-search'}/> 查找</button>
-                            <Dropdown className="btn btn-primary" options={
-                                [
-                                    {
-                                        content: "清除条件",
-                                        onClick: () => {
-                                            if(this.props.onQueryChanged)
-                                            {
-                                                this.props.onQueryChanged(
-                                                    JSON.stringify({
-                                                        pgO:0,
-                                                        pgIPP:this.state.pgItemsPerPage,
-                                                        pgT:0
-                                                    })
-                                                );
-                                                return;
-                                            }
-                                            this.setState({
-                                                args: null,
-                                                filter: {},
-                                                query:null,
-                                                loadKey: "lk" + (__loadKey++),
-                                                pgOffset: 0,
-                                                pgTotal: 0
-                                            });
+                        <button className="btn btn-primary " disabled={state.submitting} onClick={() => this.handleSubmit() }><i className={state.submitting ? 'fa fa-cog fa-spin' : 'fa fa-search'}/> 查找</button>
+                        <Dropdown className="btn btn-primary" options={
+                            [
+                                {
+                                    content: "清除条件",
+                                    onClick: () => {
+                                        if(this.props.onQueryChanged)
+                                        {
+                                            this.props.onQueryChanged(
+                                                JSON.stringify({
+                                                    pgO:0,
+                                                    pgIPP:this.state.pgItemsPerPage,
+                                                    pgT:0
+                                                })
+                                            );
+                                            return;
                                         }
-                                    },
-                                    {
-                                        content: "导出筛选数据",
-                                        onClick: () => {
-                                            window.open(`/api/BackEndConsoleExport/Export?Service=${this.props.controller}&Method=${this.props.action}&Mode=table&Format=excel&Argument=${encodeURIComponent(JSON.stringify(this.state.args))}&Token=${encodeURIComponent(apicall.getAccessToken())}`);
-                                        }
+                                        this.setState({
+                                            args: null,
+                                            filter: {},
+                                            query:null,
+                                            loadKey: "lk" + (__loadKey++),
+                                            pgOffset: 0,
+                                            pgTotal: 0
+                                        });
                                     }
-                                ].concat(tableProps.dropdownActions && tableProps.dropdownActions.map(a=>({content:a.text,onClick:a.action})) || [])
-                            }/>
-                        </div>
-
+                                },
+                                {
+                                    content: "导出筛选数据",
+                                    onClick: () => {
+                                        window.open(`/api/BackEndConsoleExport/Export?Service=${this.props.controller}&Method=${this.props.action}&Mode=table&Format=excel&Argument=${encodeURIComponent(JSON.stringify(this.state.args))}&Token=${encodeURIComponent(apicall.getAccessToken())}`);
+                                    }
+                                }
+                            ].concat(tableProps.dropdownActions && tableProps.dropdownActions.map(a=>({content:a.text,onClick:a.action})) || [])
+                        }/>
+                    </div>
                        
                     }
                     />
@@ -308,7 +311,7 @@ export class ApiTable extends React.Component<ApiTableProps, state>
                 />
             <div ref="footer" className="table-footer">
                 <div className='status'>{this.state.status}</div>
-                {this.cfg.pagingSupported ?
+                {cfg.pagingSupported ?
                     <Pagination
                         className="paging"
                         title="分页:"

@@ -23,7 +23,7 @@ export interface ApiFormProps {
     onChange?(value): void;
     hideSubmitPanel?: boolean;
     autoSubmitTimeout?: number;
-    onBuildSubmitPanel?(props: Editors.IBaseEditorProps, state: Editors.IFormState) :JSX.Element;
+    onBuildSubmitPanel?(props: Editors.IBaseEditorProps, state: Editors.IFormState) :React.ReactNode;
     onSubmit?(data: any): PromiseLike<any>,
     onSubmitSuccess?(result: any):void;
     readonly?: boolean;

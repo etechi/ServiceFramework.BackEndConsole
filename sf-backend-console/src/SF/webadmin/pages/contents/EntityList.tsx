@@ -116,14 +116,15 @@ export default async function build(ctn: IPageContent,ctx:IPageBuildContext): Pr
     const controller = lib.getEntityController(cfg.entity);
     if (!controller)
         throw "找不到实体控制器：" + cfg.entity;
-
+    
+    const action=cfg.action;
     var CreateAction = false,
-        UpdateAction = false,
-        LoadForEditAction = false,
-        LoadAction = false,
-        GetAction = false,
-        ListAction = false,
-        QueryAction = false;
+    UpdateAction = false,
+    LoadForEditAction = false,
+    LoadAction = false,
+    GetAction = false,
+    ListAction = false,
+    QueryAction = false;
     controller.Methods.forEach(a => {
         switch (a.Name) {
             case "Create": CreateAction = true; break;
@@ -136,54 +137,7 @@ export default async function build(ctn: IPageContent,ctx:IPageBuildContext): Pr
         }
     });
 
-    
-
-    var attrValues = Meta.attrFirstValue(controller, Meta.EntityManagerAttribute);
-    var entityActions = controller.Methods
-        .map(a => ({
-            action: a,
-            attr: Meta.attrFirstValue(a, Meta.EntityActionAttribute)
-        }))
-        .filter(a => a.attr != null).map(a => ({
-            action: a.action,
-            attr: a.attr,
-            type: detectActionType(lib, a.action,cfg.entity)
-        }));
-
-
-    var actionBuilders: IActionBuilder[] = null;
-    var headActionBuilders: IActionBuilder[] = null;
-    if (!ListAction && !QueryAction)
-        return {
-            component: () =><div>不支持列表</div>
-        };
-
-    var globalActions = entityActions.filter(a =>
-        a.type == ActionType.GlobalForm || a.type == ActionType.GlobalView
-    );
-    if (globalActions.length > 0) {
-        headActionBuilders = globalActions.map(a => {
-            var cond = a.attr.ConditionExpression ? new Function('return ' + a.attr.ConditionExpression) : () => true;
-            const linkBase = `/ap/entity/${entity}/${a.action.Name}`;
-            return {
-                build: (r: any, idx: any) => {
-                    return cond.call(r) ?
-                        <Link key={idx} className="btn btn-default btn-xs table-action" title={a.action.Description} to={linkBase} >{a.action.Title}</Link> :
-                        null;
-                },
-                textLength: a.action.Title.length
-            }
-        });
-    }
-
-    var listItemActions = entityActions.filter(a =>
-        a.type == ActionType.ContextView ||
-        a.type == ActionType.ContextDirectly ||
-        a.type == ActionType.ContextForm ||
-        a.type == ActionType.ContextQuery
-    );
-
-    const listAction = lib.action(controller.Name, QueryAction ? 'Query' : 'List');
+    const listAction = lib.action(controller.Name,action || (QueryAction ? 'Query' : 'List'));
     const type = lib.detectListResultType(lib.type(listAction.Type));
     const ids = lib.getIdentPropNames(type);
     const getKey = (r: any) =>
@@ -191,59 +145,110 @@ export default async function build(ctn: IPageContent,ctx:IPageBuildContext): Pr
     const getKeyStr = (r: any) =>
         getKey(r).join('/')
 
-    if (listItemActions.length > 0) {
-                
-        actionBuilders = listItemActions.map(a => {
-            var cond = a.attr.ConditionExpression ? new Function('return ' + a.attr.ConditionExpression) : () => true;
-            if (a.type == ActionType.ContextForm || a.type == ActionType.ContextView) {
-                const linkBase = `/ap/entity/${cfg.entity}/${a.action.Name}`;
+            
+
+    var actionBuilders: IActionBuilder[] = null;
+    var headActionBuilders: IActionBuilder[] = null;
+    if(!action)
+    {
+      
+
+        var attrValues = Meta.attrFirstValue(controller, Meta.EntityManagerAttribute);
+        var entityActions = controller.Methods
+            .map(a => ({
+                action: a,
+                attr: Meta.attrFirstValue(a, Meta.EntityActionAttribute)
+            }))
+            .filter(a => a.attr != null).map(a => ({
+                action: a.action,
+                attr: a.attr,
+                type: detectActionType(lib, a.action,cfg.entity)
+            }));
+
+
+        if (!ListAction && !QueryAction)
+            return {
+                component: () =><div>不支持列表</div>
+            };
+
+        var globalActions = entityActions.filter(a =>
+            a.type == ActionType.GlobalForm || a.type == ActionType.GlobalView
+        );
+        if (globalActions.length > 0) {
+            headActionBuilders = globalActions.map(a => {
+                var cond = a.attr.ConditionExpression ? new Function('return ' + a.attr.ConditionExpression) : () => true;
+                const linkBase = `/ap/entity/${entity}/${a.action.Name}`;
                 return {
                     build: (r: any, idx: any) => {
                         return cond.call(r) ?
-                            <Link key={idx} className="btn btn-default btn-xs table-action" title={a.action.Description} to={linkBase + "?id="+getKeyStr(r)} >{a.action.Title}</Link> :
+                            <Link key={idx} className="btn btn-default btn-xs table-action" title={a.action.Description} to={linkBase} >{a.action.Title}</Link> :
                             null;
                     },
                     textLength: a.action.Title.length
                 }
-            }
-            else if (a.type == ActionType.ContextQuery) {
-                const linkBase = `/ap/entity/${cfg.entity}/`;
-                var startQuery = (id: any) => {
-                    lib.call(
-                        controller.Name,
-                        a.action.Name,
-                        {
-                            [a.action.Parameters[0].Name]: id
-                        }, null).then(re => {
-                            location.href = linkBase + '?filter=' + JSON.stringify(re);
-                        });
-                };
-                return {
-                    build: (r: any, idx: any) => {
-                        return cond.call(r) ?
-                            <button type="button" key={idx} className="btn btn-default btn-xs table-action" onClick={() => startQuery(getKeyStr(r))} > {a.action.Title}</button> :
-                            null;
-                    },
-                    textLength: a.action.Title.length
-                };
-
-            }
-            else
-                return {
-                    build: (r: any, idx: any, refresh: any) => {
-                        return cond.call(r) ?
-                            <button
-                                key={idx}
-                                className="btn btn-default btn-xs table-action"
-                                title={a.action.Description}
-                                onClick={() => handleContextAction(lib, controller.Name, a.action, getKey(r), refresh)} >{a.action.Title}</button> :
-                            null;
-                    },
-                    textLength: a.action.Title.length
+            });
+        }
+        
+        var listItemActions = entityActions.filter(a =>
+            a.type == ActionType.ContextView ||
+            a.type == ActionType.ContextDirectly ||
+            a.type == ActionType.ContextForm ||
+            a.type == ActionType.ContextQuery
+        );
+        if (listItemActions.length > 0) {
+                    
+            actionBuilders = listItemActions.map(a => {
+                var cond = a.attr.ConditionExpression ? new Function('return ' + a.attr.ConditionExpression) : () => true;
+                if (a.type == ActionType.ContextForm || a.type == ActionType.ContextView) {
+                    const linkBase = `/ap/entity/${cfg.entity}/${a.action.Name}`;
+                    return {
+                        build: (r: any, idx: any) => {
+                            return cond.call(r) ?
+                                <Link key={idx} className="btn btn-default btn-xs table-action" title={a.action.Description} to={linkBase + "?id="+getKeyStr(r)} >{a.action.Title}</Link> :
+                                null;
+                        },
+                        textLength: a.action.Title.length
+                    }
                 }
+                else if (a.type == ActionType.ContextQuery) {
+                    const linkBase = `/ap/entity/${cfg.entity}/`;
+                    var startQuery = (id: any) => {
+                        lib.call(
+                            controller.Name,
+                            a.action.Name,
+                            {
+                                [a.action.Parameters[0].Name]: id
+                            }, null).then(re => {
+                                location.href = linkBase + '?filter=' + JSON.stringify(re);
+                            });
+                    };
+                    return {
+                        build: (r: any, idx: any) => {
+                            return cond.call(r) ?
+                                <button type="button" key={idx} className="btn btn-default btn-xs table-action" onClick={() => startQuery(getKeyStr(r))} > {a.action.Title}</button> :
+                                null;
+                        },
+                        textLength: a.action.Title.length
+                    };
 
-        });
-    } 
+                }
+                else
+                    return {
+                        build: (r: any, idx: any, refresh: any) => {
+                            return cond.call(r) ?
+                                <button
+                                    key={idx}
+                                    className="btn btn-default btn-xs table-action"
+                                    title={a.action.Description}
+                                    onClick={() => handleContextAction(lib, controller.Name, a.action, getKey(r), refresh)} >{a.action.Title}</button> :
+                                null;
+                        },
+                        textLength: a.action.Title.length
+                    }
+
+            });
+        } 
+    }
     var headerLinks = !readonly && CreateAction ? [{ to: `/ap/entity/${entity}/new/${cfg.service || 0}`, text: '添加' + entityTitle }] : null;
     
     //查找关联查询 
@@ -275,7 +280,7 @@ export default async function build(ctn: IPageContent,ctx:IPageBuildContext): Pr
     });
 
     var consoleId=ctx.consoleId;
-    var settingPath= `entity/${entity}/list/query` ;
+    var settingPath= `entity/${entity}/list/${action || 'query'}` ;
     async function loadQueries()
     {
         var re=await apicall.call<any>("BackEndConsoleUISetting", "List", { ConsoleId: consoleId, Path:settingPath});
@@ -288,7 +293,7 @@ export default async function build(ctn: IPageContent,ctx:IPageBuildContext): Pr
     }
     var queries=await loadQueries();
 
-    const curLinkBase= `/ap/entity/${entity}/`;
+    const curLinkBase= `/ap/entity/${entity}/${action ||""}`;
 
     //headerLinks=[{to:'aaa',text:'aaaa'}];
     function getCurQueryString(search?:string){
@@ -308,15 +313,16 @@ export default async function build(ctn: IPageContent,ctx:IPageBuildContext): Pr
         var curQuery=getCurQueryString(search);
         var idx=queries.map((q,i)=>({q,i})).filter(q=>q.q.Query==curQuery);
         idx=idx.length?idx[0].i:-1;
-
-        return {
-            actions:(headerLinks?headerLinks.map((l, i) =>
-                <Link key={"l" + i} className="btn btn-primary" to={l.to} >{l.text}</Link>
-                ):[])
-            .concat(
+        var actions=(headerLinks?headerLinks.map((l, i) =>
+            <Link key={"l" + i} className="btn btn-primary" to={l.to} >{l.text}</Link>
+            ):[]).concat(
                 headActionBuilders ? lodash.flatten(headActionBuilders.map((a, i) =>
                     a.build(null, i, ()=>ctn().refresh())
-                )):[]),
+            )):[]);
+
+        
+        return {
+                actions:actions,
                 nav:queries.map((q,i)=>
                     <li className={(idx==i?"active":"")}><Link 
                         replace={true}
@@ -401,7 +407,7 @@ export default async function build(ctn: IPageContent,ctx:IPageBuildContext): Pr
                 return <EntityTable
                     ref="table"
                     controller={controller.Name}
-                    action={QueryAction ? "Query" : "List"}
+                    action={listAction.Name}
                     serviceId={cfg.service}
                     className="full-page-list"
                     //titleLinkBuilder={args.titleLinkBuilder}

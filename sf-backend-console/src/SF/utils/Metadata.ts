@@ -385,4 +385,5 @@ export const EntityActionAttribute = "SF.Sys.Annotations.EntityActionAttribute";
 export const EntityRelatedAttribute = "SF.Sys.Annotations.EntityRelatedAttribute";
 export const CopyableAttribute = "SF.Sys.Annotations.CopyableAttribute";
 export const DateAttribute = "SF.Sys.Annotations.DateAttribute";
+export const PercentAttribute = "SF.Sys.Annotations.PercentAttribute";
 export const IgnoreAttribute = "SF.Sys.Annotations.IgnoreAttribute";

@@ -23,7 +23,8 @@ const defaultTypeRenderMap = {
     float: 'realNumberRender',
     double: 'realNumberRender',
 
-    enum:'enumRender'
+    enum:'enumRender',
+    percent:'percentRender'
 }
 
 const charWidth = 8;
@@ -239,7 +240,7 @@ function buildColumn(path: string, getter: TableColumnRender.IFieldGetter, prop:
         return new TableColumnField(prop, TableColumnRender.renders['arrayRender'], order, path, getter, renderWrapper);
     }
 
-    var render = defaultTypeRenderMap[type.IsEnumType?"enum": prop.Type];
+    var render = defaultTypeRenderMap[type.IsEnumType?"enum":Meta.attrFirst(prop,Meta.PercentAttribute)?'percent':prop.Type];
     if (!render)
         throw "找不到表格列绘制器" + prop.Type;
 

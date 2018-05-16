@@ -177,6 +177,20 @@ const realNumberRender: IColumnRender = {
         }
     }
 }
+const percentRender: IColumnRender = {
+    exec(getter: IFieldGetter, args: IRenderExecArgument, ctx: IRenderExecContext): IRenderResult {
+        var w = 5;
+        var values = ctx.rows.map((r, i) => {
+            var v = getter(r) || 0;
+            return Math.floor(v*1000)/10+"%";
+        });
+        return {
+            align: "center",
+            width: w, 
+            render: a => values[a.rowIndex]
+        }
+    }
+}
 
 const enumRender: IColumnRender = {
     exec(getter: IFieldGetter, args: IRenderExecArgument, ctx: IRenderExecContext): IRenderResult {
@@ -208,5 +222,6 @@ export const renders = {
     fixedNumberRender,
     realNumberRender,
     enumRender,
-    arrayRender
+    arrayRender,
+    percentRender
 }
