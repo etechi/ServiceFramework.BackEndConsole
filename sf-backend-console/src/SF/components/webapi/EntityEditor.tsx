@@ -272,7 +272,7 @@ export class EntityEditor extends React.Component<EntityEditorProps, state>{
                 readonly={this.props.readonly}
                 controller={this.props.controller}
                 serviceId={this.props.serviceId}
-                action={this.props.readonly ? "@" + act.Name : curAction.Name }
+                action={this.props.readonly || !curAction ? "@" + act.Name : curAction.Name }
                 value={this.state.value}
                 onChange={(v) => {
                     console.log(v) 
