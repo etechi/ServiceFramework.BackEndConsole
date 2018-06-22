@@ -186,10 +186,8 @@ class DynamicPropEditor extends React.Component<IDynamicPropEditorProps, {}>{
             return <div className="form-control">请先指定类型，再继续编辑！</div>
         if (value)
             value = JSON.parse(value);
-        if (!value) {
-            value = {};
-            this.props.lib.restoreDefaultValues(value, lib.type(type));
-        }
+        if (!value) value = {};
+        this.props.lib.restoreDefaultValues(value, lib.type(type),true);
         var ps = assign(this.props, {
             value: value,
             onChange: (e) => {
