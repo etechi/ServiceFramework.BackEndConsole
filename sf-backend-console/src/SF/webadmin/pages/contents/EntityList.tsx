@@ -251,7 +251,7 @@ export default async function build(ctn: IPageContent,ctx:IPageBuildContext): Pr
     }
     var headerLinks = !readonly && CreateAction ? [{ to: `/ap/entity/${entity}/new/${cfg.service || 0}`, text: '添加' + entityTitle }] : null;
     
-    //查找关联查询 
+    //查找关联查询  
     lib.getEntities()
     .map(e=>{var c=lib.getEntityController(e);return {e:e,c:c,m:c.Methods.filter(m=>m.Name=="Query")[0]};})
     .filter(c=>c.m)
@@ -259,24 +259,35 @@ export default async function build(ctn: IPageContent,ctx:IPageBuildContext): Pr
         if(!ctx.permissions[c.e])
             return;
         var at=lib.type(c.m.Parameters[0].Type);
-       lib.allTypeProperties(at).filter(p=>lib.attrValue(p,Meta.EntityIdentAttribute).Entity==entity).forEach(p=>
-            {
-
-                if(!actionBuilders)actionBuilders=[];
-                const linkBase = `/ap/entity/${c.e}/`;
-                const title=lib.getEntityTitle(c.e) || c.e;
+        var props=lib.allTypeProperties(at).filter(p=>lib.attrValue(p,Meta.EntityIdentAttribute).Entity==entity);
+        if(props.length)
+        {
+            const linkBase = `/ap/entity/${c.e}/`;
+            if(!actionBuilders)actionBuilders=[];
+            var addLink=(title,propName)=>{
                 //%7B%22pgO%22%3A0%2C%22pgIPP%22%3A20%2C%22pgT%22%3A0%2C%22args%22%3A%7B%22PatientId%22%3A18401%7D%7D
                 //{"pgO":0,"pgIPP":20,"pgT":0,"args":{"PatientId":18401}}
                 actionBuilders.push({
                     build: (r: any, idx: any) => {
                         var id=getKeyStr(r);
-                        var val=p.Name=="Id"?{Id:{Id:id}}:{[p.Name]:id};
+                        var val=propName=="Id"?{Id:{Id:id}}:{[propName]:id};
                         var q=encodeURIComponent(JSON.stringify({args:val}));
                         return <Link key={idx} className="btn btn-xs table-action" title={title} to={linkBase + "?q="+q} >{title}</Link>;
                     },
                     textLength:title.length
                 });
-            });
+            }
+            if(props.length==1)
+                addLink(lib.getEntityTitle(c.e) || c.e,props[0].Name);
+            else
+            {
+                var dstEntityTitle=lib.getEntityTitle(c.e) || c.e;
+                props.forEach(p=>{
+                    var title=p.Title.replace(entityTitle,"").replace(dstEntityTitle,"")+dstEntityTitle;
+                    addLink(title,p.Name);
+                });
+            }
+        }
     });
 
     var consoleId=ctx.consoleId;
