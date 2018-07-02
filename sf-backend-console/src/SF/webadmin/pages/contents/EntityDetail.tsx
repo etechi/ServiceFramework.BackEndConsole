@@ -1,6 +1,7 @@
 ﻿import * as React from 'react'
 import * as ReactRouter from 'react-router'
 import { Link } from "react-router-dom";
+import * as lodash from 'lodash';
 
 import { EntityEditor } from "../../../components/webapi/EntityEditor";
 import * as ApiMeta from "../../../utils/ApiMeta";
@@ -42,22 +43,35 @@ export default async function build( ctn: IPageContent,ctx:IPageBuildContext): P
             if(!ctx.permissions[c.e])
                 return;
             var at=lib.type(c.m.Parameters[0].Type);
-            lib.allTypeProperties(at).filter(p=>lib.attrValue(p,Meta.EntityIdentAttribute).Entity==entity).forEach(p=>
-                {
-                    const linkBase = `/ap/entity/${c.e}/`;
-                    const title=lib.getEntityTitle(c.e) || c.e;
+            var props=lib.allTypeProperties(at).filter(p=>lib.attrValue(p,Meta.EntityIdentAttribute).Entity==entity);
+            if(props.length)
+            {
+                const linkBase = `/ap/entity/${c.e}/`;
+                if(!actionBuilders)actionBuilders=[];
+                var addLink=(title,propName)=>{
                     //%7B%22pgO%22%3A0%2C%22pgIPP%22%3A20%2C%22pgT%22%3A0%2C%22args%22%3A%7B%22PatientId%22%3A18401%7D%7D
                     //{"pgO":0,"pgIPP":20,"pgT":0,"args":{"PatientId":18401}}
                     actionBuilders.push({
                         build: (r: any, idx: any) => {
                             var id=getKeyStr(r);
-                            var val=p.Name=="Id"?{Id:{Id:id}}:{[p.Name]:id};
+                            var val=propName=="Id"?{Id:{Id:id}}:{[propName]:id};
                             var q=encodeURIComponent(JSON.stringify({args:val}));
-                            return <li><Link key={idx} className="btn btn-xs table-action" title={title} to={linkBase + "?q="+q} >{title}</Link></li>;
+                            return [{ desc:title,to:linkBase + "?q="+q,text:title}];
                         },
                         textLength:title.length
                     });
-                }); 
+                }
+                if(props.length==1)
+                    addLink(lib.getEntityTitle(c.e) || c.e,props[0].Name);
+                else
+                {
+                    var dstEntityTitle=lib.getEntityTitle(c.e) || c.e;
+                    props.forEach(p=>{
+                        var title=p.Title.replace(entityTitle,"").replace(dstEntityTitle,"")+dstEntityTitle;
+                        addLink(title,p.Name);
+                    });
+                }
+            }
         });
 
     return {
@@ -71,8 +85,8 @@ export default async function build( ctn: IPageContent,ctx:IPageBuildContext): P
                     onBuildSubmitPanel={(p, s, cmds) => {
                         var navs=null;
                         if(s.curValue && actionBuilders)
-                            navs=actionBuilders.map(b=>b.build(s.curValue,1));
-                        this.props.head(cmds,navs);
+                            navs=lodash.flatten(actionBuilders.map(b=>b.build(s.curValue,1)));
+                        this.props.head([{dom:cmds}],navs);
                         return <div></div>;
                     }}
                />

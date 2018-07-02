@@ -26,7 +26,7 @@ export default async function build( ctn: IPageContent,ctx:IPageBuildContext): P
                     controller={controller.Name}
                     serviceId={cfg.service}
                     onBuildSubmitPanel={(p, s,cmds) => {
-                        this.props.head(cmds);
+                        this.props.head([{dom:cmds}]);
                         return <div></div>;
                     }}
                     />

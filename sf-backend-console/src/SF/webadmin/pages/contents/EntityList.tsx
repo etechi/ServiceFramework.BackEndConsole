@@ -2,7 +2,7 @@
 import * as ReactRouter from 'react-router'
 import { Link } from "react-router-dom";
 
-import { EntityTable, IActionBuilder } from "../../../components/webapi/EntityTable";
+import { EntityTable, IActionBuilder, IActionBuildResult } from "../../../components/webapi/EntityTable";
 import * as ApiMeta from "../../../utils/ApiMeta";
 import * as Meta from "../../../utils/Metadata";
 import { show as showModal } from "../../../components/utils/Modal";
@@ -179,11 +179,10 @@ export default async function build(ctn: IPageContent,ctx:IPageBuildContext): Pr
                 var cond = a.attr.ConditionExpression ? new Function('return ' + a.attr.ConditionExpression) : () => true;
                 const linkBase = `/ap/entity/${entity}/${a.action.Name}`;
                 return {
-                    build: (r: any, idx: any) => {
-                        return cond.call(r) ?
-                            <Link key={idx} className="btn btn-default btn-xs table-action" title={a.action.Description} to={linkBase} >{a.action.Title}</Link> :
-                            null;
-                    },
+                    build: (r: any, idx: any) =>
+                         cond.call(r) ?
+                            [{ to:linkBase,text:a.action.Title}] :
+                            null,
                     textLength: a.action.Title.length
                 }
             });
@@ -202,11 +201,10 @@ export default async function build(ctn: IPageContent,ctx:IPageBuildContext): Pr
                 if (a.type == ActionType.ContextForm || a.type == ActionType.ContextView) {
                     const linkBase = `/ap/entity/${cfg.entity}/${a.action.Name}`;
                     return {
-                        build: (r: any, idx: any) => {
-                            return cond.call(r) ?
-                                <Link key={idx} className="btn btn-default btn-xs table-action" title={a.action.Description} to={linkBase + "?id="+getKeyStr(r)} >{a.action.Title}</Link> :
-                                null;
-                        },
+                        build: (r: any, idx: any) => 
+                            cond.call(r) ?
+                                [{desc:a.action.Description,to:linkBase + "?id="+getKeyStr(r),text:a.action.Title}]:
+                                null,
                         textLength: a.action.Title.length
                     }
                 }
@@ -223,33 +221,33 @@ export default async function build(ctn: IPageContent,ctx:IPageBuildContext): Pr
                             });
                     };
                     return {
-                        build: (r: any, idx: any) => {
-                            return cond.call(r) ?
-                                <button type="button" key={idx} className="btn btn-default btn-xs table-action" onClick={() => startQuery(getKeyStr(r))} > {a.action.Title}</button> :
-                                null;
-                        },
+                        build: (r: any, idx: any) => 
+                            cond.call(r) ?
+                                [{onClick:() => startQuery(getKeyStr(r)),text:a.action.Title}]:
+                                null,
                         textLength: a.action.Title.length
                     };
 
                 }
                 else
                     return {
-                        build: (r: any, idx: any, refresh: any) => {
-                            return cond.call(r) ?
-                                <button
-                                    key={idx}
-                                    className="btn btn-default btn-xs table-action"
-                                    title={a.action.Description}
-                                    onClick={() => handleContextAction(lib, controller.Name, a.action, getKey(r), refresh)} >{a.action.Title}</button> :
-                                null;
-                        },
+                        build: (r: any, idx: any, refresh: any) => 
+                            cond.call(r) ?
+                                [{desc:a.action.Description,
+                                    onclick:() => handleContextAction(lib, controller.Name, a.action, getKey(r), refresh),
+                                    text:a.action.Title}]:
+                                null,
                         textLength: a.action.Title.length
                     }
 
             });
         } 
     }
-    var headerLinks = !readonly && CreateAction ? [{ to: `/ap/entity/${entity}/new/${cfg.service || 0}`, text: '添加' + entityTitle }] : null;
+    var headerLinks:IActionBuildResult[] = !readonly && CreateAction ? [{
+        primary:true, 
+        to: `/ap/entity/${entity}/new/${cfg.service || 0}`, 
+        text: '添加' + entityTitle }
+    ] : null;
     
     //查找关联查询  
     lib.getEntities()
@@ -272,7 +270,7 @@ export default async function build(ctn: IPageContent,ctx:IPageBuildContext): Pr
                         var id=getKeyStr(r);
                         var val=propName=="Id"?{Id:{Id:id}}:{[propName]:id};
                         var q=encodeURIComponent(JSON.stringify({args:val}));
-                        return <Link key={idx} className="btn btn-xs table-action" title={title} to={linkBase + "?q="+q} >{title}</Link>;
+                        return [{ desc:title,to:linkBase + "?q="+q,text:title}];
                     },
                     textLength:title.length
                 });
@@ -324,9 +322,7 @@ export default async function build(ctn: IPageContent,ctx:IPageBuildContext): Pr
         var curQuery=getCurQueryString(search);
         var idx=queries.map((q,i)=>({q,i})).filter(q=>q.q.Query==curQuery);
         idx=idx.length?idx[0].i:-1;
-        var actions=(headerLinks?headerLinks.map((l, i) =>
-            <Link key={"l" + i} className="btn btn-primary" to={l.to} >{l.text}</Link>
-            ):[]).concat(
+        var actions=(headerLinks || []).concat(
                 headActionBuilders ? lodash.flatten(headActionBuilders.map((a, i) =>
                     a.build(null, i, ()=>ctn().refresh())
             )):[]);
@@ -334,14 +330,13 @@ export default async function build(ctn: IPageContent,ctx:IPageBuildContext): Pr
         
         return {
                 actions:actions,
-                nav:queries.map((q,i)=>
-                    <li className={(idx==i?"active":"")}><Link 
-                        replace={true}
-                        key={i} 
-                        
-                        title={q.Name} 
-                        to={curLinkBase + "?q="+encodeURIComponent(JSON.stringify({args:JSON.parse(q.Query)}))} >{q.Name}</Link></li>
-                ),
+                nav:queries.map((q,i)=>({
+                    replace:true,
+                    active:idx==i,
+                    desc:q.Name, 
+                    to:curLinkBase + "?q="+encodeURIComponent(JSON.stringify({args:JSON.parse(q.Query)})),
+                    text:q.Name
+                })),
                 queryIndex:idx
             };
     }
@@ -360,7 +355,7 @@ export default async function build(ctn: IPageContent,ctx:IPageBuildContext): Pr
                 var re=getHeadComponents(()=>this,nextProps.location.search);
                 nextProps.head(re.actions,re.nav);
                 this.setState({queryIndex:re.queryIndex});
-            }
+            } 
             refresh() { 
                 (this.refs["table"] as any).refresh();
             }
