@@ -243,11 +243,19 @@ export default async function build(ctn: IPageContent,ctx:IPageBuildContext): Pr
             });
         } 
     }
-    var headerLinks:IActionBuildResult[] = !readonly && CreateAction ? [{
+    var headerLinks:IActionBuildResult[] =[
+        // {
+        //     to: `/ap/entity/${entity}/help`, 
+        //     text: '帮助'  
+        // }
+        ];
+    
+    if(!readonly && CreateAction)
+        headerLinks.unshift({
         primary:true, 
         to: `/ap/entity/${entity}/new/${cfg.service || 0}`, 
         text: '添加' + entityTitle }
-    ] : null;
+        );
     
     //查找关联查询  
     lib.getEntities()

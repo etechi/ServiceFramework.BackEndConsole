@@ -86,7 +86,14 @@ export default async function build( ctn: IPageContent,ctx:IPageBuildContext): P
                         var navs=null;
                         if(s.curValue && actionBuilders)
                             navs=lodash.flatten(actionBuilders.map(b=>b.build(s.curValue,1)));
-                        this.props.head([{dom:cmds}],navs);
+                        this.props.head(
+                            [
+                                {dom:cmds},
+                                // {
+                                //     text:'帮助',
+                                //     to: `/ap/entity/${entity}/help`
+                                // }
+                            ],navs);
                         return <div></div>;
                     }}
                />

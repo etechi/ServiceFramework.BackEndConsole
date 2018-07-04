@@ -22,12 +22,14 @@ export default class PageHeader extends React.Component<{ title: any}, { actions
     }
     render() {
         return <Page.Header title={this.props.title} nav={this.state && this.state.nav || null} >
+            <div>
             {this.state && this.state.actions?this.state.actions.map((n,i)=>
                 n.dom?n.dom:
                 n.to?<Link key={i} className={"btn btn-"+(n.primary?"primary":"default")} replace={n.replace} title={n.desc} to={n.to}>{n.text}</Link>:
                 n.onClick?<button key={i} className="btn btn-default " title={n.desc} onClick={n.onClick}>{n.text}</button>:
                 null
             ):null}
+            </div>
         </Page.Header>
     }
 }

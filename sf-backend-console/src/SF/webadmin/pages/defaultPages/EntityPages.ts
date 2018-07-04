@@ -24,6 +24,26 @@ const pages = {
             }
         }
     },
+    async help(lib: ApiMeta.Library,permission:string, entity: string, svc: string): Promise<IPageConfig> {
+        const entityTitle = lib.getEntityTitle(entity) || entity;
+        const controller = lib.getEntityController(entity);
+        var attrValues = Meta.attrFirstValue(controller, Meta.EntityManagerAttribute);
+        var mgr = controller.Methods.filter(a => a.Name == "Create" || a.Name == "Update").length > 0;
+
+        var title = (attrValues.Title || entityTitle + (mgr ? "管理" : ""))+"帮助";
+        return {
+            Path:`/ap/entity/${entity}/help`,
+            Title: title,
+            Content: {
+                Path:'', 
+                Config : JSON.stringify({
+                    entity: entity,
+                    service : svc
+                }),
+                Type : "EntityHelp"
+            }
+        }
+    },
     async new(lib: ApiMeta.Library,permission:string, entity: string, svc: string): Promise<IPageConfig> {
         const entityTitle = lib.getEntityTitle(entity) || entity;
         return {

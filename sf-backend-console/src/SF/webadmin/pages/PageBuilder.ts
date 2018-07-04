@@ -7,12 +7,14 @@ import EntityList from "./contents/EntityList";
 import EntityNew from "./contents/EntityNew";
 import EntityDetail from "./contents/EntityDetail";
 import EntityEdit from "./contents/EntityEdit";
+import EntityHelp from "./contents/EntityHelp";
 
 const contentBuilders = {
     EntityList,
     EntityNew,
     EntityDetail,
-    EntityEdit
+    EntityEdit,
+    EntityHelp
 };
 
 export async function build( cfg:IPageConfig,ctx:IPageBuildContext): Promise<ICachedPage>{
