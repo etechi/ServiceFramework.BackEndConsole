@@ -2,7 +2,7 @@
 import {upload} from "./Uploader";
 import Debouncer from "../../utils/Debouncer";
 
-
+import {getAccessToken} from "../../utils/apicall"
 
 export interface RichEditorProps{
     disabled?: boolean;
@@ -43,7 +43,7 @@ export class RichEditor extends React.Component<RichEditorProps, state>{
                 'insertfile', 'table', 'hr',  'baidumap',
                 'anchor', 'link', 'unlink'
             ],
-            uploadJson:"/api/media/upload?returnJson=true"
+            uploadJson:"/api/media/upload?returnJson=true&access-token="+encodeURIComponent(getAccessToken())
             });
         this._editor.html(this.props.value);
         this._curHtml = this.props.value;

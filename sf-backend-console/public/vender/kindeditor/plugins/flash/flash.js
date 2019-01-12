@@ -92,7 +92,7 @@ KindEditor.plugin('flash', function(K) {
 					url : K.addParam(uploadJson, 'dir=flash'),
 					afterUpload : function(data) {
 						dialog.hideLoading();
-						if (data.error === 0) {
+						if (!data.error) {
 							var url = data.url;
 							if (formatUploadUrl) {
 								url = K.formatUrl(url, 'absolute');

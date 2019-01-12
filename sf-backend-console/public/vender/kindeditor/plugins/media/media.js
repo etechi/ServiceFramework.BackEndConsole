@@ -100,7 +100,7 @@ KindEditor.plugin('media', function(K) {
 					url : K.addParam(uploadJson, 'dir=media'),
 					afterUpload : function(data) {
 						dialog.hideLoading();
-						if (data.error === 0) {
+						if (!data.error) {
 							var url = data.url;
 							if (formatUploadUrl) {
 								url = K.formatUrl(url, 'absolute');
