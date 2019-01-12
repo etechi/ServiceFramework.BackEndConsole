@@ -48,8 +48,8 @@ export default function BuildPage(consoleId:number,lib: ApiMeta.Library,permissi
                 );
         } 
         header: any;
-        headActions: any;
-        headNav:any;
+        headActions:  Page.IHeadLink[];
+        headNav: Page.IHeadLink[];
         render() {
             var p = this.props;
             var page = this.state.page;
@@ -69,7 +69,7 @@ export default function BuildPage(consoleId:number,lib: ApiMeta.Library,permissi
                     {page ? React.createElement(
                         page.component, {
                             ref: "content",
-                            head: (actions,nav) => {
+                            head: (actions: Page.IHeadLink[],nav: Page.IHeadLink[]) => {
                                 if (this.header) this.header.setChildContent(actions,nav);
                                 else {
                                     this.headActions = actions;

@@ -2,6 +2,7 @@
 
 export interface Option {
     content: string | JSX.Element;
+    disabled?:boolean;
     onClick(): void;
 }
 export interface DropdownProps{
@@ -9,6 +10,8 @@ export interface DropdownProps{
     className?: string;
     options: Option[];
     children?: React.ReactNode;
+    style?:Object;
+    disabled?:boolean;
 }
 export class Dropdown extends React.Component<DropdownProps, { open?: boolean }>{
     constructor(props: any) {
@@ -23,6 +26,8 @@ export class Dropdown extends React.Component<DropdownProps, { open?: boolean }>
             clearTimeout(this._timer);
     }
     handleOpen() {
+        if(this.props.disabled)
+            return;
         this._timer = setTimeout(() => {
             this._timer = null;
 
@@ -41,16 +46,17 @@ export class Dropdown extends React.Component<DropdownProps, { open?: boolean }>
         return (React.createElement as any)(
             this.props.tagName || "div",
             {
+                style:this.props.style,
                 className: (this.props.className || "dropdown") + (this.state.open ? ' open' : '')
             },
-            <button className="btn btn-default" type="button" onClick={() => this.handleOpen() } >
+            <button className={"btn btn-default"+(this.props.disabled?" disabled":"")}  type="button" onClick={() => this.handleOpen() } >
                 {this.props.children}
                 <span className="caret"></span>
             </button>,
             this.state.open? <ul className= "dropdown-menu" >
             {
                     this.props.options.map((o, i) =>
-                        o ? <li key={i}><a href="javascript:;" onClick={() => o.onClick() } >{o.content}</a></li> :
+                        o ? <li key={i}><a href="javascript:;" className={o.disabled?"disabled":""} onClick={() =>{if(!o.disabled) o.onClick()} } >{o.content}</a></li> :
                         <li key={i} role="separator" className="divider"></li>
                 )
             }
@@ -65,6 +71,8 @@ export interface DropListProps {
     value: any;
     options: { content: string | JSX.Element, value: any }[];
     onChange(value: any):void;
+    style?:Object;
+    disabled?:boolean;
 }
 
 export class DropList extends React.Component<DropListProps, {}>{
@@ -77,8 +85,10 @@ export class DropList extends React.Component<DropListProps, {}>{
                 break;
             }
         return <Dropdown
+            style={this.props.style}
             tagName={this.props.tagName}
             className={this.props.className}
+            disabled={this.props.disabled}
             options={
             this.props.options.map(o => (o?{
                 content: o.content,

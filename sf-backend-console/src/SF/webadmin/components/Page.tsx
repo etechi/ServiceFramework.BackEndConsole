@@ -2,12 +2,18 @@
 import { Link } from 'react-router-dom'
 
 export interface IHeadLink {
+    dom?:React.ReactNode;
     to?: string;
-    text: string 
+    text: string;
+    active?:boolean;
+    replace?:boolean;
+    primary?:boolean;
+    desc?:string;
+    onClick?():void;
 }
 export interface IHeaderProps {
     title?: string;
-    nav?: React.ReactNode;
+    nav?: IHeadLink[];
     children?: React.ReactNode;
 }
 export class Header extends React.Component<IHeaderProps, any>{
@@ -25,8 +31,41 @@ export class Header extends React.Component<IHeaderProps, any>{
                 }
             </ul> */}
             <div className="tabbable-line" style={{float:"left",margin:"5px 0 0 16px"}}>
-            <div className="nav nav-tabs">
-                {this.props.nav}
+                <div className="nav nav-tabs">
+                    
+                    {
+                        (()=>{
+                            var nav:any=this.props.nav?this.props.nav.filter(n=>!!n.to).map((n,i)=>
+                                <li className={n.active?"active":""}><Link key={i} className="btn btn-xs table-action" replace={n.replace} title={n.desc} to={n.to}>{n.text}</Link></li>
+                            ):[];
+                            if(!(nav.length>8))
+                                return nav;
+
+                            return [
+                                nav.slice(0,8),
+                                <li ref="drop" className={"dropdown "+(this.state && this.state.moreLinks && "open" || "")} 
+                                    onMouseOut={(e)=>{
+                                        if(!this.refs.drop)return;
+                                        var rt=e.relatedTarget as any;
+                                        while(rt)
+                                        {
+                                            if(rt==this.refs.drop)
+                                                return;
+                                            rt=rt.parentNode;
+                                        }
+                                        this.setState({moreLinks:false});
+                                        
+                                        }}>
+                                    <a onMouseOver={()=>{this.setState({moreLinks:true})}}>更多</a>
+                                    <ul className= "dropdown-menu" >
+                                    {nav.slice(8)}
+                                    </ul>
+                                </li>
+                            ];
+
+                        })()
+                    }
+
                 </div>
             </div>
             <div className="page-toolbar">

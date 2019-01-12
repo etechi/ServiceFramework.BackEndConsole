@@ -221,7 +221,7 @@ export function buildForm(
         )
         return class DynamicForm extends React.Component<IDynamicFormProps, {}>{
             submit() {
-                (this.refs["form"] as any).submit();
+                return (this.refs["form"] as any).submit();
             }
             reset() {
                 (this.refs["form"] as any).reset();
@@ -230,7 +230,7 @@ export function buildForm(
                 var f = this.refs["form"] as any;
                 return f ? f.getFormProps() : null;
             }
-            getFormState(): Editors.IFormState {
+            getFormState(): Editors.IFormState { 
                 var f = this.refs["form"] as any;
                 return f ? f.getFormState() : null;
             }
@@ -310,7 +310,7 @@ export function buildFormByRender(
     ): any {
     return class DynamicForm extends React.Component<IDynamicFormProps, {}>{
         submit() {
-            (this.refs["form"] as any).submit();
+           return (this.refs["form"] as any).submit();
         }
         reset() {
             (this.refs["form"] as any).reset();

@@ -29,7 +29,13 @@ export default async function build( ctn: IPageContent,ctx:IPageBuildContext): P
                     serviceId={cfg.service}
                     readonly={readonly}
                     onBuildSubmitPanel={(p, s, cmds) => {
-                        this.props.head(cmds);
+                        this.props.head([
+                            {dom:cmds},
+                            // {
+                            //     text:'帮助',
+                            //      to: `/ap/entity/${entity}/help`
+                            // }
+                        ]);
                         return <div></div>;
                     }}
                />

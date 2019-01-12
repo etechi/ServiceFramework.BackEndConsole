@@ -9,6 +9,7 @@ var browserHistory=createBrowserHistory();
 //import {DynamicFormProps} from '../forms/DynamicForm';
 import * as Editors from "../editors";
 import { bool } from 'prop-types';
+import {Dropdown} from "../utils/Dropdown";
 
 export interface EntityEditorProps {
     id?: string|number | any[];
@@ -230,12 +231,31 @@ export class EntityEditor extends React.Component<EntityEditorProps, state>{
         if (!props || !state) return null;
         
         return <div className='editor-submit-panel'>
-            {this.props.readonly ? null : <div className="btn-group" >
-                <button type='button' className="btn btn-primary btn-sm" disabled={state.submitting || !state.meta.changed} onClick={() => this.handleSubmit()} ><span className={state.submitting ? "fa fa-cog fa-spin" : "fa fa-save"}></span> 保存</button>
-                <button type='button' className="btn btn-default btn-sm" disabled={state.submitting || !state.meta.changed} onClick={() => this.handleSubmitAndReturn()} >保存并返回</button>
-                {createSupported ? <button type='button' className="btn btn-default btn-sm" disabled={state.submitting || !state.meta.changed} onClick={() => this.handleSubmitAndNew()} >保存并新建</button> : null}
-                {createSupported ? <button type='button' className="btn btn-default btn-sm" disabled={state.submitting || !state.meta.changed} onClick={() => this.handleSubmitAndCopy()} >保存并复制</button> : null}
-            </div>}
+            {this.props.readonly ? null : 
+            <div className="btn-group btn-group-sm search">
+                <button type='button' className="btn btn-primary" title="保存" disabled={state.submitting || !state.meta.changed} onClick={() => this.handleSubmit()} ><span className={state.submitting ? "fa fa-cog fa-spin" : "fa fa-save"}></span> 保存</button>
+                <Dropdown  className="btn btn-primary" style={{paddingBottom:"5px"}} options={
+                    [
+                        {
+                            content: "保存并返回",
+                            disabled:state.submitting || !state.meta.changed,
+                            onClick: () => this.handleSubmitAndReturn()
+                        },
+                        {
+                            content: "保存并新建",
+                            disabled:state.submitting || !state.meta.changed,
+                            onClick: () =>  this.handleSubmitAndReturn()
+                        },
+                        {
+                            content: "保存并复制",
+                            disabled:state.submitting || !state.meta.changed,
+                            onClick: () =>  this.handleSubmitAndCopy()
+                        }
+                    ]
+                }/>
+            </div>
+            }
+
             &nbsp;
             {this.props.readonly ? null :
                 <div className="btn-group">

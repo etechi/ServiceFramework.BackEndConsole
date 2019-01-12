@@ -5,10 +5,21 @@ import * as ApiTableManager from "./ApiTableManager";
 import {TableConfig} from "./ApiTableBuilder";
 import {Link} from "react-router-dom";
 import {buildEntityLink} from "../../utils/EntityLinkBuilder";
+import * as lodash from 'lodash';
 
+export interface IActionBuildResult{
+    desc?:string;
+    active?:boolean;
+    replace?:boolean;
+    primary?:boolean;
+    text:string;
+    to?:string;
+    mode?:string;
+    onClick?():void;
+}
 export interface IActionBuilder {
     textLength: number;
-    build(row: any,idx:number,refresh:()=>void): JSX.Element | JSX.Element[];
+    build(row: any,idx:number,refresh:()=>void): IActionBuildResult[];
 }
 export interface EntityTableProps {
     controller: string;
@@ -33,7 +44,7 @@ export interface EntityTableProps {
 
 }
 
-export class EntityTable extends React.Component<EntityTableProps, {}>
+export class EntityTable extends React.Component<EntityTableProps, {dropMenuShowId?:string}>
 {
     cfg: TableConfig;
     constructor(props: EntityTableProps) {
@@ -59,16 +70,20 @@ export class EntityTable extends React.Component<EntityTableProps, {}>
                     var to = buildEntityLink(entity, keys.map(k => r[k]), this.props.serviceId);
                     if (!to)
                         return null;
-                    var re=<Link target={p.linkTarget} key={idx}
-                        className="btn btn-default btn-xs table-action"
-                        to={to}>
-                        {this.props.readonly || this.cfg.entityReadonly ? '详细' : '编辑'}
-                    </Link>;
+                    var re:IActionBuildResult={
+                        text:this.props.readonly || this.cfg.entityReadonly ? '详细' : '编辑',
+                        to:to,
+                        mode:'command'
+                    };
                     if(!p.onEntitySelected)
-                        return re;
+                        return [re];
                     return [
                         re,
-                        <button key={idx} type="button" className="btn btn-default btn-xs table-action" onClick={() => p.onEntitySelected(r,true)}>选择</button>
+                        //<button key={idx} type="button" className="btn btn-default btn-xs table-action" onClick={() => p.onEntitySelected(r,true)}>选择</button>
+                        {
+                            text:"选择",
+                            onClick:() => p.onEntitySelected(r,true)
+                        }
                     ];
                 }, textLength: p.onEntitySelected?5:2
             });
@@ -82,21 +97,40 @@ export class EntityTable extends React.Component<EntityTableProps, {}>
                 width: 30 + 16 * actions.reduce((s,a)=>s+a.textLength,0),
                 extraCell: (rows, props) => {
                     var row = rows[props.rowIndex];
-                    var re:any=[];
-                    for(var i=0;i<actions.length;i++)
-                    {
-                        var r:any=actions[i].build(row, i, refresh);
-                        if(!r) continue;
-                        if(r instanceof Array)
-                        {
-                            for(var j=0;j<r.length;j++)
-                            if(r[j])
-                                re.push(r[j])
-                        }
-                        else
-                            re.push(r);
-                    }
-                    return re;
+                    var re=lodash.flatten(actions.map((a,i)=>a.build(row, i, refresh))).filter(a=>!!a);
+                    var doms= re.map((r,idx)=>{
+                        if(r.to)
+                            return <Link target={p.linkTarget} key={idx}
+                                className={(r.mode=="command"?"btn btn-default btn-xs table-action":"btn btn-default btn-xs table-action btn-link")}
+                                to={r.to}>
+                                {r.text}
+                            </Link>;
+                        else if(r.onClick)
+                            return <button key={idx} type="button" className="btn btn-default btn-xs table-action" onClick={r.onClick}>{r.text}</button>
+                    });
+                    // if(!(doms.length>8))
+                    //     return doms;
+                    // var left=doms.splice(8);
+                    // doms.push(<a className={"btn btn-default btn-xs table-action btn-link dropdown open "+(this.state && this.state.dropMenuShowId==""? "open" :"")} 
+                    //     onMouseOut={(e)=>{
+                    //         if(!this.refs.drop)return;
+                    //         var rt=e.relatedTarget as any;
+                    //         while(rt)
+                    //         {
+                    //             if(rt.className.indexOf("dropdown")!=-1)
+                    //                 return;
+                    //             rt=rt.parentNode;
+                    //         }
+                    //         this.setState({dropMenuShowId:""});
+                            
+                    //         }}>
+                    //     <span onMouseOver={()=>{this.setState({dropMenuShowId:""})}}>更多</span>
+                    //     <ul className= "dropdown-menu" style={{zIndex:10000}} >
+                    //     {left}
+                    //     </ul>
+                    //     </a>)
+                    return doms;
+                
                 }
             });
         }
